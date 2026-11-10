@@ -68,13 +68,29 @@ func Spark(values []float64, top *float64) string {
 	return b.String()
 }
 
+// ecsAPI, rdsAPI and cwAPI are the parts of the AWS clients the pane uses (the SDK paginators
+// take these same methods).
+type ecsAPI interface {
+	ListClusters(context.Context, *ecs.ListClustersInput, ...func(*ecs.Options)) (*ecs.ListClustersOutput, error)
+	ListServices(context.Context, *ecs.ListServicesInput, ...func(*ecs.Options)) (*ecs.ListServicesOutput, error)
+	DescribeServices(context.Context, *ecs.DescribeServicesInput, ...func(*ecs.Options)) (*ecs.DescribeServicesOutput, error)
+}
+
+type rdsAPI interface {
+	DescribeDBInstances(context.Context, *rds.DescribeDBInstancesInput, ...func(*rds.Options)) (*rds.DescribeDBInstancesOutput, error)
+}
+
+type cwAPI interface {
+	GetMetricData(context.Context, *cloudwatch.GetMetricDataInput, ...func(*cloudwatch.Options)) (*cloudwatch.GetMetricDataOutput, error)
+}
+
 type Fleet struct {
 	ui.Base
 	every  time.Duration
 	region string
-	ecs    *ecs.Client
-	rds    *rds.Client
-	cw     *cloudwatch.Client
+	ecs    ecsAPI
+	rds    rdsAPI
+	cw     cwAPI
 	svcs   []svc
 	dbs    []db
 	m      map[string][]float64
@@ -310,6 +326,8 @@ func (p *Fleet) Refresh() error {
 		return err
 	}
 	if err := p.loadMetrics(ctx); err != nil {
+		// Metrics are keyed by row position: never show old ones against the new rows.
+		p.m = map[string][]float64{}
 		return err
 	}
 	p.loaded = true
