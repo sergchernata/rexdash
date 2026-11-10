@@ -162,14 +162,29 @@ type event struct {
 	msg string
 }
 
+// ecsAPI, rdsAPI and cwAPI are the parts of the AWS clients the pane uses.
+type ecsAPI interface {
+	DescribeServices(context.Context, *ecs.DescribeServicesInput, ...func(*ecs.Options)) (*ecs.DescribeServicesOutput, error)
+	ListTasks(context.Context, *ecs.ListTasksInput, ...func(*ecs.Options)) (*ecs.ListTasksOutput, error)
+	DescribeTasks(context.Context, *ecs.DescribeTasksInput, ...func(*ecs.Options)) (*ecs.DescribeTasksOutput, error)
+}
+
+type rdsAPI interface {
+	DescribeDBInstances(context.Context, *rds.DescribeDBInstancesInput, ...func(*rds.Options)) (*rds.DescribeDBInstancesOutput, error)
+}
+
+type cwAPI interface {
+	GetMetricData(context.Context, *cloudwatch.GetMetricDataInput, ...func(*cloudwatch.Options)) (*cloudwatch.GetMetricDataOutput, error)
+}
+
 type Infra struct {
 	ui.Base
 	every                time.Duration
 	cluster, service, db string
 	region               string
-	ecs                  *ecs.Client
-	rds                  *rds.Client
-	cw                   *cloudwatch.Client
+	ecs                  ecsAPI
+	rds                  rdsAPI
+	cw                   cwAPI
 	svc                  *svc
 	tasks                []task
 	events               []event
@@ -366,7 +381,8 @@ func (p *Infra) dbState(ctx context.Context) error {
 // dbStorage is (percent used, used GB, allocated GB).
 func (p *Infra) dbStorage() (pct, used, alloc float64, ok bool) {
 	free, ok := p.last("dbfree")
-	if p.dbi == nil || !ok {
+	// No figure until the database reports its size (0 GB while it's being created).
+	if p.dbi == nil || !ok || p.dbi.allocated <= 0 {
 		return 0, 0, 0, false
 	}
 	alloc = p.dbi.allocated
