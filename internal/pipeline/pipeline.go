@@ -80,10 +80,23 @@ type action struct {
 }
 
 type runView struct {
-	run     int
+	run     int    // index into runs
+	id      string // the run's execution id; runs shift down as new ones start
 	actions []action
 	st      ui.TableState
 	log     *ui.TextView
+}
+
+// cpAPI is the part of the CodePipeline client the pane uses.
+type cpAPI interface {
+	GetPipelineState(context.Context, *cp.GetPipelineStateInput, ...func(*cp.Options)) (*cp.GetPipelineStateOutput, error)
+	ListPipelineExecutions(context.Context, *cp.ListPipelineExecutionsInput, ...func(*cp.Options)) (*cp.ListPipelineExecutionsOutput, error)
+	ListActionExecutions(context.Context, *cp.ListActionExecutionsInput, ...func(*cp.Options)) (*cp.ListActionExecutionsOutput, error)
+}
+
+// logsAPI is the part of the CloudWatch Logs client the pane uses.
+type logsAPI interface {
+	GetLogEvents(context.Context, *cloudwatchlogs.GetLogEventsInput, ...func(*cloudwatchlogs.Options)) (*cloudwatchlogs.GetLogEventsOutput, error)
 }
 
 type Pipeline struct {
@@ -91,8 +104,8 @@ type Pipeline struct {
 	every  time.Duration
 	name   string
 	region string
-	cp     *cp.Client
-	logs   *cloudwatchlogs.Client
+	cp     cpAPI
+	logs   logsAPI
 	stages []stage
 	runs   []run
 	st     ui.TableState
@@ -247,7 +260,8 @@ func (p *Pipeline) Status() ui.Status {
 				break
 			}
 		}
-		return ui.Status{State: "working", Msg: fmt.Sprintf("%s running %s", name, ui.Dur(ui.Now()-r.start))}
+		// Between stages no stage is InProgress yet.
+		return ui.Status{State: "working", Msg: strings.TrimSpace(fmt.Sprintf("%s running %s", name, ui.Dur(ui.Now()-r.start)))}
 	case "Failed", "Stopped", "Cancelled":
 		return ui.Status{State: "error", Msg: fmt.Sprintf("%s %s ago · %s", r.status, ui.Ago(r.end), short(r.msg))}
 	}
@@ -305,7 +319,13 @@ func (p *Pipeline) Refresh() error {
 	}
 	ui.Clamp(&p.st.Sel, len(p.runs))
 
-	// Keep an open run view live while it is still running.
+	// Keep an open run view on its run (new runs push it down the list), and live while it runs.
+	if v := p.view; v != nil {
+		v.run = slices.IndexFunc(p.runs, func(r run) bool { return r.id == v.id })
+		if v.run < 0 {
+			v.run = len(p.runs) // dropped off the list: keep what's shown
+		}
+	}
 	if v := p.view; v != nil && v.log == nil && v.run < len(p.runs) {
 		actions, err := p.loadActions(p.runs[v.run].id)
 		if err != nil {
@@ -377,7 +397,7 @@ func (p *Pipeline) Key(ev *tcell.EventKey) error {
 					break
 				}
 			}
-			p.view = &runView{run: i, actions: actions, st: st}
+			p.view = &runView{run: i, id: p.runs[i].id, actions: actions, st: st}
 			ui.Zoom(true)
 		}
 	default:
