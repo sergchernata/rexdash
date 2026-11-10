@@ -213,11 +213,17 @@ func apiErr(err error) error {
 	return err
 }
 
+// costExplorer is the part of the Cost Explorer client the pane calls (a fake in tests).
+type costExplorer interface {
+	GetCostAndUsage(context.Context, *costexplorer.GetCostAndUsageInput, ...func(*costexplorer.Options)) (*costexplorer.GetCostAndUsageOutput, error)
+	GetCostForecast(context.Context, *costexplorer.GetCostForecastInput, ...func(*costexplorer.Options)) (*costexplorer.GetCostForecastOutput, error)
+}
+
 type Billing struct {
 	ui.Base
 	every time.Duration
-	ce    *costexplorer.Client
-	cache string
+	ce    costExplorer
+	cache string // cache file path
 	// The first refresh may use the disk cache; later ones (timer or `r`) always fetch.
 	first bool
 	data  *data
