@@ -1,0 +1,79 @@
+[
+ {
+  "name": "addresses",
+  "args": [
+   {
+    "serial": 7,
+    "terraform_version": "1.17.2",
+    "resources": [
+     {
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "b",
+      "instances": [
+       {
+        "attributes": {
+         "acl": "private"
+        }
+       }
+      ]
+     },
+     {
+      "mode": "managed",
+      "type": "aws_ecs_service",
+      "name": "svc",
+      "module": "module.app",
+      "instances": [
+       {
+        "index_key": 0,
+        "attributes": {
+         "n": 1
+        }
+       },
+       {
+        "index_key": "web",
+        "attributes": {
+         "n": 2
+        }
+       }
+      ]
+     },
+     {
+      "mode": "data",
+      "type": "aws_caller_identity",
+      "name": "me",
+      "instances": [
+       {
+        "attributes": {
+         "id": "1"
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "want": {
+   "serial": 7,
+   "tf": "1.17.2",
+   "data": 1,
+   "addresses": [
+    "aws_s3_bucket.b",
+    "module.app.aws_ecs_service.svc[\"web\"]",
+    "module.app.aws_ecs_service.svc[0]"
+   ]
+  }
+ },
+ {
+  "name": "empty",
+  "args": [
+   {}
+  ],
+  "want": {
+   "serial": 0,
+   "tf": "",
+   "data": 0,
+   "addresses": []
+  }
+ }
+]

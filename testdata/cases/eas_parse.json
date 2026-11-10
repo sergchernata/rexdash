@@ -1,0 +1,191 @@
+[
+ {
+  "name": "runs and builds",
+  "args": [
+   {
+    "slug": "mobile-app",
+    "ownerAccount": {
+     "name": "acme"
+    },
+    "workflowRunsPaginated": {
+     "edges": [
+      {
+       "node": {
+        "id": "r1",
+        "name": "Staging iOS Build & Submit (TestFlight)",
+        "status": "SUCCESS",
+        "triggerEventType": "GITHUB_PUSH",
+        "requestedGitRef": "refs/heads/staging",
+        "gitCommitMessage": "Ship it\n\nbody",
+        "createdAt": "2026-11-07T12:50:25Z",
+        "durationSeconds": 694,
+        "jobs": [
+         {
+          "key": "build_ios",
+          "name": "build_ios",
+          "type": "BUILD",
+          "status": "SUCCESS",
+          "createdAt": "2026-11-07T12:50:26Z",
+          "updatedAt": "2026-11-07T12:59:26Z",
+          "turtleBuild": {
+           "id": "b1",
+           "appVersion": "1.2.9",
+           "appBuildVersion": "94",
+           "platform": "IOS",
+           "buildProfile": "staging"
+          },
+          "turtleSubmission": null
+         },
+         {
+          "key": "submit_ios",
+          "name": "submit_ios",
+          "type": "SUBMISSION",
+          "status": "SUCCESS",
+          "createdAt": "2026-11-07T12:59:26Z",
+          "updatedAt": "2026-11-07T13:01:59Z",
+          "turtleBuild": null,
+          "turtleSubmission": {
+           "status": "FINISHED"
+          }
+         }
+        ]
+       }
+      }
+     ]
+    },
+    "builds": [
+     {
+      "id": "b1",
+      "platform": "IOS",
+      "status": "FINISHED",
+      "buildProfile": "staging",
+      "appVersion": "1.2.9",
+      "appBuildVersion": "94",
+      "createdAt": "2026-11-07T12:50:26Z",
+      "workerStartedAt": "2026-11-07T12:51:00Z",
+      "completedAt": "2026-11-07T12:59:25Z",
+      "gitCommitMessage": "Ship it",
+      "gitRef": "refs/heads/staging",
+      "developmentClient": false,
+      "isForIosSimulator": false,
+      "distribution": "STORE",
+      "initiatingActor": {
+       "displayName": "GitHub App · @acme"
+      },
+      "error": null
+     },
+     {
+      "id": "b2",
+      "platform": "ANDROID",
+      "status": "ERRORED",
+      "buildProfile": "development",
+      "appVersion": "1.2.8",
+      "appBuildVersion": "7",
+      "createdAt": "2026-11-01T10:00:00Z",
+      "workerStartedAt": null,
+      "completedAt": "2026-11-01T10:03:00Z",
+      "gitCommitMessage": null,
+      "gitRef": null,
+      "developmentClient": true,
+      "initiatingActor": {
+       "displayName": "dev"
+      },
+      "error": {
+       "message": "Gradle failed"
+      }
+     },
+     {
+      "id": "b3",
+      "platform": "IOS",
+      "status": "IN_PROGRESS",
+      "buildProfile": "production",
+      "appVersion": "1.3.0",
+      "appBuildVersion": "215",
+      "createdAt": "2026-11-10T10:00:00Z",
+      "workerStartedAt": "2026-11-10T10:00:30Z",
+      "completedAt": null,
+      "gitCommitMessage": "x",
+      "gitRef": "refs/heads/main",
+      "developmentClient": false,
+      "initiatingActor": null,
+      "error": null
+     }
+    ]
+   }
+  ],
+  "want": {
+   "url": "https://expo.dev/accounts/acme/projects/mobile-app",
+   "runs": [
+    {
+     "id": "r1",
+     "name": "Staging iOS Build & Submit (TestFlight)",
+     "status": "SUCCESS",
+     "ref": "staging",
+     "msg": "Ship it\n\nbody",
+     "created": 1794055825,
+     "secs": 694,
+     "jobs": [
+      {
+       "name": "build_ios",
+       "kind": "BUILD",
+       "status": "SUCCESS",
+       "secs": 540,
+       "version": "1.2.9 (94)"
+      },
+      {
+       "name": "submit_ios",
+       "kind": "SUBMISSION",
+       "status": "SUCCESS",
+       "secs": 153,
+       "version": null
+      }
+     ]
+    }
+   ],
+   "builds": [
+    {
+     "id": "b1",
+     "platform": "IOS",
+     "status": "FINISHED",
+     "profile": "staging",
+     "version": "1.2.9 (94)",
+     "created": 1794055826,
+     "secs": 505,
+     "ref": "staging",
+     "msg": "Ship it",
+     "who": "GitHub App · @acme",
+     "error": "",
+     "dev": false
+    },
+    {
+     "id": "b2",
+     "platform": "ANDROID",
+     "status": "ERRORED",
+     "profile": "development",
+     "version": "1.2.8 (7)",
+     "created": 1793527200,
+     "secs": 180,
+     "ref": "local · dev",
+     "msg": "",
+     "who": "dev",
+     "error": "Gradle failed",
+     "dev": true
+    },
+    {
+     "id": "b3",
+     "platform": "IOS",
+     "status": "IN_PROGRESS",
+     "profile": "production",
+     "version": "1.3.0 (215)",
+     "created": 1794304800,
+     "secs": 0,
+     "ref": "main",
+     "msg": "x",
+     "who": "",
+     "error": "",
+     "dev": false
+    }
+   ]
+  }
+ }
+]

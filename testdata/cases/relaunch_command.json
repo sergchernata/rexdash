@@ -1,0 +1,106 @@
+[
+ {
+  "name": "claude",
+  "args": [
+   {
+    "kind": "claude",
+    "session": "1a2b3c4d",
+    "cwd": "/Users/me"
+   }
+  ],
+  "want": [
+   "cd /Users/me && claude --resume 1a2b3c4d",
+   true
+  ]
+ },
+ {
+  "name": "rexdash",
+  "args": [
+   {
+    "kind": "rexdash",
+    "argv": [
+     "logs",
+     "flow",
+     "--stream",
+     "phoenix/",
+     "--hide",
+     "a b"
+    ],
+    "env": {
+     "AWS_PROFILE": "default"
+    },
+    "cwd": "/x y"
+   }
+  ],
+  "want": [
+   "cd '/x y' && AWS_PROFILE=default rexdash logs flow --stream phoenix/ --hide 'a b'",
+   true
+  ]
+ },
+ {
+  "name": "rexdash two env vars",
+  "args": [
+   {
+    "kind": "rexdash",
+    "argv": [
+     "fleet"
+    ],
+    "env": {
+     "AWS_PROFILE": "p",
+     "AWS_REGION": "us-east-1"
+    },
+    "cwd": "/a"
+   }
+  ],
+  "want": [
+   "cd /a && AWS_PROFILE=p AWS_REGION=us-east-1 rexdash fleet",
+   true
+  ]
+ },
+ {
+  "name": "other is typed, not run",
+  "args": [
+   {
+    "kind": "other",
+    "command": "bun run dev",
+    "cwd": "/app"
+   }
+  ],
+  "want": [
+   "cd /app && bun run dev",
+   false
+  ]
+ },
+ {
+  "name": "no cwd",
+  "args": [
+   {
+    "kind": "claude",
+    "session": "s"
+   }
+  ],
+  "want": [
+   "claude --resume s",
+   true
+  ]
+ },
+ {
+  "name": "shell",
+  "args": [
+   {
+    "kind": "shell",
+    "cwd": "/"
+   }
+  ],
+  "want": null
+ },
+ {
+  "name": "unknown",
+  "args": [
+   {
+    "kind": "weird"
+   }
+  ],
+  "want": null
+ }
+]

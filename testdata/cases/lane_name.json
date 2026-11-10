@@ -1,0 +1,23 @@
+[
+ {
+  "name": "Staging iOS Build & Submit (TestFlight)",
+  "args": [
+   "Staging iOS Build & Submit (TestFlight)"
+  ],
+  "want": "Staging iOS"
+ },
+ {
+  "name": "Production iOS Build & Submit",
+  "args": [
+   "Production iOS Build & Submit"
+  ],
+  "want": "Production iOS"
+ },
+ {
+  "name": "Nightly",
+  "args": [
+   "Nightly"
+  ],
+  "want": "Nightly"
+ }
+]

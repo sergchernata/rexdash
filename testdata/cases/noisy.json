@@ -1,0 +1,72 @@
+[
+ {
+  "name": "/r/node_modules/x/index.js",
+  "args": [
+   "/r/node_modules/x/index.js"
+  ],
+  "want": true
+ },
+ {
+  "name": "/r/_build/dev/lib/app.beam",
+  "args": [
+   "/r/_build/dev/lib/app.beam"
+  ],
+  "want": true
+ },
+ {
+  "name": "/r/.git/objects/ab/cdef",
+  "args": [
+   "/r/.git/objects/ab/cdef"
+  ],
+  "want": true
+ },
+ {
+  "name": "/r/target/release/rexdash",
+  "args": [
+   "/r/target/release/rexdash"
+  ],
+  "want": true
+ },
+ {
+  "name": "/r/deps/phoenix/mix.exs",
+  "args": [
+   "/r/deps/phoenix/mix.exs"
+  ],
+  "want": true
+ },
+ {
+  "name": "/r/.expo/state",
+  "args": [
+   "/r/.expo/state"
+  ],
+  "want": true
+ },
+ {
+  "name": "/r/dist/index.html",
+  "args": [
+   "/r/dist/index.html"
+  ],
+  "want": true
+ },
+ {
+  "name": "/r/lib/app/user.ex",
+  "args": [
+   "/r/lib/app/user.ex"
+  ],
+  "want": false
+ },
+ {
+  "name": "/r/.git/index",
+  "args": [
+   "/r/.git/index"
+  ],
+  "want": false
+ },
+ {
+  "name": "/r/lib/targets.ex",
+  "args": [
+   "/r/lib/targets.ex"
+  ],
+  "want": false
+ }
+]

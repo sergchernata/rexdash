@@ -1,0 +1,30 @@
+[
+ {
+  "name": "abc",
+  "args": [
+   "abc"
+  ],
+  "want": "abc"
+ },
+ {
+  "name": "éééééééééééé",
+  "args": [
+   "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé"
+  ],
+  "want": "ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé…"
+ },
+ {
+  "name": "xxxxxxxxxxxx",
+  "args": [
+   "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  ],
+  "want": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+ },
+ {
+  "name": "xxxxxxxxxxxx",
+  "args": [
+   "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  ],
+  "want": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx…"
+ }
+]

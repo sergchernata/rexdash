@@ -1,0 +1,424 @@
+[
+ {
+  "name": "changed and removed",
+  "args": [
+   {
+    "serial": 1,
+    "terraform_version": "1.17.2",
+    "resources": [
+     {
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "b",
+      "instances": [
+       {
+        "attributes": {
+         "acl": "private"
+        }
+       }
+      ]
+     },
+     {
+      "mode": "managed",
+      "type": "aws_ecs_service",
+      "name": "svc",
+      "module": "module.app",
+      "instances": [
+       {
+        "index_key": 0,
+        "attributes": {
+         "n": 1
+        }
+       },
+       {
+        "index_key": "web",
+        "attributes": {
+         "n": 2
+        }
+       }
+      ]
+     },
+     {
+      "mode": "data",
+      "type": "aws_caller_identity",
+      "name": "me",
+      "instances": [
+       {
+        "attributes": {
+         "id": "1"
+        }
+       }
+      ]
+     },
+     {
+      "mode": "managed",
+      "type": "aws_sqs_queue",
+      "name": "q",
+      "instances": [
+       {
+        "attributes": {}
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "serial": 2,
+    "terraform_version": "1.17.2",
+    "resources": [
+     {
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "b",
+      "instances": [
+       {
+        "attributes": {
+         "acl": "public-read"
+        }
+       }
+      ]
+     },
+     {
+      "mode": "managed",
+      "type": "aws_ecs_service",
+      "name": "svc",
+      "module": "module.app",
+      "instances": [
+       {
+        "index_key": 0,
+        "attributes": {
+         "n": 1
+        }
+       },
+       {
+        "index_key": "web",
+        "attributes": {
+         "n": 2
+        }
+       }
+      ]
+     },
+     {
+      "mode": "data",
+      "type": "aws_caller_identity",
+      "name": "me",
+      "instances": [
+       {
+        "attributes": {
+         "id": "1"
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "want": {
+   "added": [],
+   "changed": [
+    "aws_s3_bucket.b"
+   ],
+   "removed": [
+    "aws_sqs_queue.q"
+   ]
+  }
+ },
+ {
+  "name": "added",
+  "args": [
+   {
+    "serial": 2,
+    "terraform_version": "1.17.2",
+    "resources": [
+     {
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "b",
+      "instances": [
+       {
+        "attributes": {
+         "acl": "public-read"
+        }
+       }
+      ]
+     },
+     {
+      "mode": "managed",
+      "type": "aws_ecs_service",
+      "name": "svc",
+      "module": "module.app",
+      "instances": [
+       {
+        "index_key": 0,
+        "attributes": {
+         "n": 1
+        }
+       },
+       {
+        "index_key": "web",
+        "attributes": {
+         "n": 2
+        }
+       }
+      ]
+     },
+     {
+      "mode": "data",
+      "type": "aws_caller_identity",
+      "name": "me",
+      "instances": [
+       {
+        "attributes": {
+         "id": "1"
+        }
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "serial": 1,
+    "terraform_version": "1.17.2",
+    "resources": [
+     {
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "b",
+      "instances": [
+       {
+        "attributes": {
+         "acl": "private"
+        }
+       }
+      ]
+     },
+     {
+      "mode": "managed",
+      "type": "aws_ecs_service",
+      "name": "svc",
+      "module": "module.app",
+      "instances": [
+       {
+        "index_key": 0,
+        "attributes": {
+         "n": 1
+        }
+       },
+       {
+        "index_key": "web",
+        "attributes": {
+         "n": 2
+        }
+       }
+      ]
+     },
+     {
+      "mode": "data",
+      "type": "aws_caller_identity",
+      "name": "me",
+      "instances": [
+       {
+        "attributes": {
+         "id": "1"
+        }
+       }
+      ]
+     },
+     {
+      "mode": "managed",
+      "type": "aws_sqs_queue",
+      "name": "q",
+      "instances": [
+       {
+        "attributes": {}
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "want": {
+   "added": [
+    "aws_sqs_queue.q"
+   ],
+   "changed": [
+    "aws_s3_bucket.b"
+   ],
+   "removed": []
+  }
+ },
+ {
+  "name": "same",
+  "args": [
+   {
+    "serial": 1,
+    "terraform_version": "1.17.2",
+    "resources": [
+     {
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "b",
+      "instances": [
+       {
+        "attributes": {
+         "acl": "private"
+        }
+       }
+      ]
+     },
+     {
+      "mode": "managed",
+      "type": "aws_ecs_service",
+      "name": "svc",
+      "module": "module.app",
+      "instances": [
+       {
+        "index_key": 0,
+        "attributes": {
+         "n": 1
+        }
+       },
+       {
+        "index_key": "web",
+        "attributes": {
+         "n": 2
+        }
+       }
+      ]
+     },
+     {
+      "mode": "data",
+      "type": "aws_caller_identity",
+      "name": "me",
+      "instances": [
+       {
+        "attributes": {
+         "id": "1"
+        }
+       }
+      ]
+     },
+     {
+      "mode": "managed",
+      "type": "aws_sqs_queue",
+      "name": "q",
+      "instances": [
+       {
+        "attributes": {}
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "serial": 1,
+    "terraform_version": "1.17.2",
+    "resources": [
+     {
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "b",
+      "instances": [
+       {
+        "attributes": {
+         "acl": "private"
+        }
+       }
+      ]
+     },
+     {
+      "mode": "managed",
+      "type": "aws_ecs_service",
+      "name": "svc",
+      "module": "module.app",
+      "instances": [
+       {
+        "index_key": 0,
+        "attributes": {
+         "n": 1
+        }
+       },
+       {
+        "index_key": "web",
+        "attributes": {
+         "n": 2
+        }
+       }
+      ]
+     },
+     {
+      "mode": "data",
+      "type": "aws_caller_identity",
+      "name": "me",
+      "instances": [
+       {
+        "attributes": {
+         "id": "1"
+        }
+       }
+      ]
+     },
+     {
+      "mode": "managed",
+      "type": "aws_sqs_queue",
+      "name": "q",
+      "instances": [
+       {
+        "attributes": {}
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "want": {
+   "added": [],
+   "changed": [],
+   "removed": []
+  }
+ },
+ {
+  "name": "refresh-only attribute ignored",
+  "args": [
+   {
+    "resources": [
+     {
+      "mode": "managed",
+      "type": "aws_db_instance",
+      "name": "db",
+      "instances": [
+       {
+        "attributes": {
+         "id": "db",
+         "latest_restorable_time": "2026-11-09T10:00:00Z"
+        }
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "resources": [
+     {
+      "mode": "managed",
+      "type": "aws_db_instance",
+      "name": "db",
+      "instances": [
+       {
+        "attributes": {
+         "id": "db",
+         "latest_restorable_time": "2026-11-09T15:00:00Z"
+        }
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "want": {
+   "added": [],
+   "changed": [],
+   "removed": []
+  }
+ }
+]

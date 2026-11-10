@@ -1,0 +1,30 @@
+[
+ {
+  "name": "module.app.aws_ecs_service.svc[0]",
+  "args": [
+   "module.app.aws_ecs_service.svc[0]"
+  ],
+  "want": "aws_ecs_service.svc"
+ },
+ {
+  "name": "aws_s3_bucket.b",
+  "args": [
+   "aws_s3_bucket.b"
+  ],
+  "want": "aws_s3_bucket.b"
+ },
+ {
+  "name": "weird",
+  "args": [
+   "weird"
+  ],
+  "want": "weird"
+ },
+ {
+  "name": "data.aws_iam_policy_document.x",
+  "args": [
+   "data.aws_iam_policy_document.x"
+  ],
+  "want": "aws_iam_policy_document.x"
+ }
+]

@@ -1,0 +1,184 @@
+[
+ {
+  "name": "(None, 5, 'down', 2)",
+  "args": [
+   null,
+   5,
+   "down",
+   2
+  ],
+  "want": [
+   true,
+   1
+  ]
+ },
+ {
+  "name": "(1, 5, 'end', 2)",
+  "args": [
+   1,
+   5,
+   "end",
+   2
+  ],
+  "want": [
+   true,
+   4
+  ]
+ },
+ {
+  "name": "(4, 5, 'down', 2)",
+  "args": [
+   4,
+   5,
+   "down",
+   2
+  ],
+  "want": [
+   true,
+   4
+  ]
+ },
+ {
+  "name": "(4, 5, 'pageup', 3)",
+  "args": [
+   4,
+   5,
+   "pageup",
+   3
+  ],
+  "want": [
+   true,
+   1
+  ]
+ },
+ {
+  "name": "(0, 5, 'up', 3)",
+  "args": [
+   0,
+   5,
+   "up",
+   3
+  ],
+  "want": [
+   true,
+   0
+  ]
+ },
+ {
+  "name": "(2, 5, 'x', 3)",
+  "args": [
+   2,
+   5,
+   "x",
+   3
+  ],
+  "want": [
+   false,
+   2
+  ]
+ },
+ {
+  "name": "(None, 0, 'down', 3)",
+  "args": [
+   null,
+   0,
+   "down",
+   3
+  ],
+  "want": [
+   true,
+   null
+  ]
+ },
+ {
+  "name": "(None, 0, 'x', 3)",
+  "args": [
+   null,
+   0,
+   "x",
+   3
+  ],
+  "want": [
+   false,
+   null
+  ]
+ },
+ {
+  "name": "(3, 5, 'home', 3)",
+  "args": [
+   3,
+   5,
+   "home",
+   3
+  ],
+  "want": [
+   true,
+   0
+  ]
+ },
+ {
+  "name": "(0, 5, 'pagedown', 3)",
+  "args": [
+   0,
+   5,
+   "pagedown",
+   3
+  ],
+  "want": [
+   true,
+   3
+  ]
+ },
+ {
+  "name": "(0, 5, 'j', 3)",
+  "args": [
+   0,
+   5,
+   "j",
+   3
+  ],
+  "want": [
+   true,
+   1
+  ]
+ },
+ {
+  "name": "(2, 5, 'k', 3)",
+  "args": [
+   2,
+   5,
+   "k",
+   3
+  ],
+  "want": [
+   true,
+   1
+  ]
+ },
+ {
+  "name": "(0, 5, 'G', 3)",
+  "args": [
+   0,
+   5,
+   "G",
+   3
+  ],
+  "want": [
+   true,
+   4
+  ]
+ },
+ {
+  "name": "(9, 5, 'down', 3)",
+  "args": [
+   9,
+   5,
+   "down",
+   3
+  ],
+  "want": [
+   true,
+   4
+  ]
+ }
+]

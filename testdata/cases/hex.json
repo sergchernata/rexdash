@@ -1,0 +1,56 @@
+[
+ {
+  "name": "#0d1117",
+  "args": [
+   "#0d1117"
+  ],
+  "want": [
+   13,
+   17,
+   23
+  ]
+ },
+ {
+  "name": "#e6edf3ff",
+  "args": [
+   "#e6edf3ff"
+  ],
+  "want": [
+   230,
+   237,
+   243
+  ]
+ },
+ {
+  "name": "0d1117",
+  "args": [
+   "0d1117"
+  ],
+  "want": null
+ },
+ {
+  "name": "#fff",
+  "args": [
+   "#fff"
+  ],
+  "want": null
+ },
+ {
+  "name": "#zzzzzz",
+  "args": [
+   "#zzzzzz"
+  ],
+  "want": null
+ },
+ {
+  "name": "#FFFFFF",
+  "args": [
+   "#FFFFFF"
+  ],
+  "want": [
+   255,
+   255,
+   255
+  ]
+ }
+]

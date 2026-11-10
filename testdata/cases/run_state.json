@@ -1,0 +1,42 @@
+[
+ {
+  "name": "('completed', 'success')",
+  "args": [
+   "completed",
+   "success"
+  ],
+  "want": "SUCCESS"
+ },
+ {
+  "name": "('completed', 'failure')",
+  "args": [
+   "completed",
+   "failure"
+  ],
+  "want": "FAILURE"
+ },
+ {
+  "name": "('completed', None)",
+  "args": [
+   "completed",
+   null
+  ],
+  "want": "COMPLETED"
+ },
+ {
+  "name": "('in_progress', None)",
+  "args": [
+   "in_progress",
+   null
+  ],
+  "want": "IN_PROGRESS"
+ },
+ {
+  "name": "('queued', None)",
+  "args": [
+   "queued",
+   null
+  ],
+  "want": "QUEUED"
+ }
+]

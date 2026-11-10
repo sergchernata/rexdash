@@ -1,0 +1,119 @@
+[
+ {
+  "name": "logs",
+  "args": [
+   [
+    "logs",
+    "flow",
+    "--stream",
+    "phoenix/",
+    "--since",
+    "1h",
+    "--hide",
+    "embed",
+    "--hide",
+    "health",
+    "-i",
+    "5"
+   ]
+  ],
+  "want": {
+   "cmd": "logs",
+   "pos": [
+    "flow"
+   ],
+   "interval": 5,
+   "repo": null,
+   "since": "1h",
+   "hide": [
+    "embed",
+    "health"
+   ],
+   "stream": "phoenix/"
+  }
+ },
+ {
+  "name": "defaults",
+  "args": [
+   [
+    "infra",
+    "flow",
+    "flow",
+    "flow-production",
+    "-i",
+    "nope"
+   ]
+  ],
+  "want": {
+   "cmd": "infra",
+   "pos": [
+    "flow",
+    "flow",
+    "flow-production"
+   ],
+   "interval": null,
+   "repo": null,
+   "since": "15m",
+   "hide": [],
+   "stream": null
+  }
+ },
+ {
+  "name": "repo",
+  "args": [
+   [
+    "prs",
+    "-r",
+    "acme/web"
+   ]
+  ],
+  "want": {
+   "cmd": "prs",
+   "pos": [],
+   "interval": null,
+   "repo": "acme/web",
+   "since": "15m",
+   "hide": [],
+   "stream": null
+  }
+ },
+ {
+  "name": "empty",
+  "args": [
+   []
+  ],
+  "want": {
+   "cmd": "",
+   "pos": [],
+   "interval": null,
+   "repo": null,
+   "since": "15m",
+   "hide": [],
+   "stream": null
+  }
+ },
+ {
+  "name": "long flags",
+  "args": [
+   [
+    "pipeline",
+    "x",
+    "--interval",
+    "30",
+    "--repo",
+    "a/b"
+   ]
+  ],
+  "want": {
+   "cmd": "pipeline",
+   "pos": [
+    "x"
+   ],
+   "interval": 30,
+   "repo": "a/b",
+   "since": "15m",
+   "hide": [],
+   "stream": null
+  }
+ }
+]

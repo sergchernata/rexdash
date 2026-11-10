@@ -1,0 +1,79 @@
+[
+ {
+  "name": "10s before now",
+  "args": [
+   10
+  ],
+  "want": "now"
+ },
+ {
+  "name": "59s before now",
+  "args": [
+   59
+  ],
+  "want": "now"
+ },
+ {
+  "name": "60s before now",
+  "args": [
+   60
+  ],
+  "want": "1m"
+ },
+ {
+  "name": "120s before now",
+  "args": [
+   120
+  ],
+  "want": "2m"
+ },
+ {
+  "name": "3599s before now",
+  "args": [
+   3599
+  ],
+  "want": "59m"
+ },
+ {
+  "name": "3600s before now",
+  "args": [
+   3600
+  ],
+  "want": "1h"
+ },
+ {
+  "name": "7200s before now",
+  "args": [
+   7200
+  ],
+  "want": "2h"
+ },
+ {
+  "name": "86399s before now",
+  "args": [
+   86399
+  ],
+  "want": "23h"
+ },
+ {
+  "name": "86400s before now",
+  "args": [
+   86400
+  ],
+  "want": "1d"
+ },
+ {
+  "name": "259200s before now",
+  "args": [
+   259200
+  ],
+  "want": "3d"
+ },
+ {
+  "name": "-30s before now",
+  "args": [
+   -30
+  ],
+  "want": "now"
+ }
+]

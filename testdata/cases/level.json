@@ -1,0 +1,58 @@
+[
+ {
+  "name": "12:00 [error] boom",
+  "args": [
+   "12:00 [error] boom"
+  ],
+  "want": "error"
+ },
+ {
+  "name": "** (RuntimeError) oops",
+  "args": [
+   "** (RuntimeError) oops"
+  ],
+  "want": "error"
+ },
+ {
+  "name": "[critical] db down",
+  "args": [
+   "[critical] db down"
+  ],
+  "want": "error"
+ },
+ {
+  "name": "[warning] slow query",
+  "args": [
+   "[warning] slow query"
+  ],
+  "want": "warn"
+ },
+ {
+  "name": "[warn] x",
+  "args": [
+   "[warn] x"
+  ],
+  "want": "warn"
+ },
+ {
+  "name": "[info] GET /",
+  "args": [
+   "[info] GET /"
+  ],
+  "want": "info"
+ },
+ {
+  "name": "plain text",
+  "args": [
+   "plain text"
+  ],
+  "want": "info"
+ },
+ {
+  "name": "[error] and [warning]",
+  "args": [
+   "[error] and [warning]"
+  ],
+  "want": "error"
+ }
+]

@@ -1,0 +1,85 @@
+[
+ {
+  "name": "three runs",
+  "args": [
+   {
+    "workflow_runs": [
+     {
+      "name": "CI",
+      "display_title": "Fix login",
+      "head_branch": "main",
+      "event": "pull_request",
+      "status": "completed",
+      "conclusion": "success",
+      "run_started_at": "2026-11-09T10:00:00Z",
+      "updated_at": "2026-11-09T10:04:37Z",
+      "html_url": "https://github.com/o/r/actions/runs/1"
+     },
+     {
+      "name": "E2E",
+      "display_title": "Try",
+      "head_branch": "feat/x",
+      "event": "push",
+      "status": "in_progress",
+      "conclusion": null,
+      "run_started_at": "2026-11-09T10:00:00Z",
+      "updated_at": "2026-11-09T10:01:00Z",
+      "html_url": "u2"
+     },
+     {
+      "name": "Lint",
+      "display_title": "",
+      "head_branch": "main",
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "run_started_at": "2026-11-09T10:00:10Z",
+      "updated_at": "2026-11-09T10:00:00Z",
+      "html_url": "u3"
+     }
+    ]
+   },
+   1794218700
+  ],
+  "want": [
+   {
+    "workflow": "CI",
+    "title": "Fix login",
+    "branch": "main",
+    "event": "pull request",
+    "state": "SUCCESS",
+    "started": 1794218400,
+    "secs": 277,
+    "url": "https://github.com/o/r/actions/runs/1"
+   },
+   {
+    "workflow": "E2E",
+    "title": "Try",
+    "branch": "feat/x",
+    "event": "push",
+    "state": "IN_PROGRESS",
+    "started": 1794218400,
+    "secs": 300,
+    "url": "u2"
+   },
+   {
+    "workflow": "Lint",
+    "title": "",
+    "branch": "main",
+    "event": "workflow dispatch",
+    "state": "CANCELLED",
+    "started": 1794218410,
+    "secs": 0,
+    "url": "u3"
+   }
+  ]
+ },
+ {
+  "name": "empty",
+  "args": [
+   {},
+   0
+  ],
+  "want": []
+ }
+]

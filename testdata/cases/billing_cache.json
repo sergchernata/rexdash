@@ -1,0 +1,124 @@
+[
+ {
+  "name": "projection",
+  "args": [
+   {
+    "fetched": 1,
+    "months": [
+     [
+      "2026-09",
+      1900.0
+     ],
+     [
+      "2026-10",
+      1646.0
+     ],
+     [
+      "2026-11",
+      518.0
+     ]
+    ],
+    "services": [
+     [
+      "Amazon Relational Database Service",
+      200.0,
+      700.0
+     ]
+    ],
+    "daily": [
+     50.0,
+     60.0
+    ],
+    "forecast": [
+     1657.0,
+     1400.0,
+     1900.0
+    ]
+   }
+  ],
+  "want": {
+   "mtd": 518.0,
+   "last_month": 1646.0,
+   "projected": 2175.0
+  }
+ },
+ {
+  "name": "no forecast",
+  "args": [
+   {
+    "fetched": 1,
+    "months": [
+     [
+      "2026-09",
+      1900.0
+     ],
+     [
+      "2026-10",
+      1646.0
+     ],
+     [
+      "2026-11",
+      518.0
+     ]
+    ],
+    "services": [
+     [
+      "Amazon Relational Database Service",
+      200.0,
+      700.0
+     ]
+    ],
+    "daily": [
+     50.0,
+     60.0
+    ],
+    "forecast": null
+   }
+  ],
+  "want": {
+   "mtd": 518.0,
+   "last_month": 1646.0,
+   "projected": null
+  }
+ },
+ {
+  "name": "one month",
+  "args": [
+   {
+    "fetched": 1,
+    "months": [
+     [
+      "2026-11",
+      5.0
+     ]
+    ],
+    "services": [
+     [
+      "Amazon Relational Database Service",
+      200.0,
+      700.0
+     ]
+    ],
+    "daily": [
+     50.0,
+     60.0
+    ],
+    "forecast": null
+   }
+  ],
+  "want": {
+   "mtd": 5.0,
+   "last_month": null,
+   "projected": null
+  }
+ },
+ {
+  "name": "bad file",
+  "args": [
+   {
+    "fetched": "x"
+   }
+  ],
+  "want": null
+ }
+]

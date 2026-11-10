@@ -1,0 +1,26 @@
+[
+ {
+  "name": "s3 block",
+  "args": [
+   "\nterraform {\n  required_version = \"~> 1.17\"\n  backend \"s3\" {\n    bucket  = \"example-terraform-state\"\n    key     = \"terraform.tfstate\"\n    region  = \"us-east-1\"\n  }\n}"
+  ],
+  "want": [
+   "example-terraform-state",
+   "terraform.tfstate"
+  ]
+ },
+ {
+  "name": "local backend",
+  "args": [
+   "backend \"local\" {}"
+  ],
+  "want": null
+ },
+ {
+  "name": "missing key",
+  "args": [
+   "backend \"s3\" {\n bucket = \"b\"\n}"
+  ],
+  "want": null
+ }
+]

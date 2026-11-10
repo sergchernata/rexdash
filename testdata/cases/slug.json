@@ -1,0 +1,23 @@
+[
+ {
+  "name": "/acme/web.git",
+  "args": [
+   "/acme/web.git"
+  ],
+  "want": "acme/web"
+ },
+ {
+  "name": "acme/api",
+  "args": [
+   "acme/api"
+  ],
+  "want": "acme/api"
+ },
+ {
+  "name": "/o/r",
+  "args": [
+   "/o/r"
+  ],
+  "want": "o/r"
+ }
+]

@@ -1,0 +1,58 @@
+[
+ {
+  "name": "lib/app.ex",
+  "args": [
+   "lib/app.ex"
+  ],
+  "want": ""
+ },
+ {
+  "name": "mix.lock",
+  "args": [
+   "mix.lock"
+  ],
+  "want": ""
+ },
+ {
+  "name": "Dockerfile.prod",
+  "args": [
+   "Dockerfile.prod"
+  ],
+  "want": ""
+ },
+ {
+  "name": "README",
+  "args": [
+   "README"
+  ],
+  "want": ""
+ },
+ {
+  "name": "src/main.rs",
+  "args": [
+   "src/main.rs"
+  ],
+  "want": ""
+ },
+ {
+  "name": "app.config.ts",
+  "args": [
+   "app.config.ts"
+  ],
+  "want": ""
+ },
+ {
+  "name": "main.tf",
+  "args": [
+   "main.tf"
+  ],
+  "want": ""
+ },
+ {
+  "name": "a/b/style.css",
+  "args": [
+   "a/b/style.css"
+  ],
+  "want": ""
+ }
+]

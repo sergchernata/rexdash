@@ -1,0 +1,50 @@
+[
+ {
+  "name": "('', 10)",
+  "args": [
+   "",
+   10
+  ],
+  "want": 1
+ },
+ {
+  "name": "('abcdefghij', 10)",
+  "args": [
+   "abcdefghij",
+   10
+  ],
+  "want": 1
+ },
+ {
+  "name": "('abcdefghijk', 10)",
+  "args": [
+   "abcdefghijk",
+   10
+  ],
+  "want": 2
+ },
+ {
+  "name": "('a\\nb\\n', 10)",
+  "args": [
+   "a\nb\n",
+   10
+  ],
+  "want": 2
+ },
+ {
+  "name": "('abc', 0)",
+  "args": [
+   "abc",
+   0
+  ],
+  "want": 3
+ },
+ {
+  "name": "('éééééééééééé', 10)",
+  "args": [
+   "éééééééééééé",
+   10
+  ],
+  "want": 2
+ }
+]

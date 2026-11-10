@@ -1,0 +1,57 @@
+[
+ {
+  "name": "('a\\nb\\nc\\n', 'a\\nB\\nc\\nd\\n')",
+  "args": [
+   "a\nb\nc\n",
+   "a\nB\nc\nd\n"
+  ],
+  "want": [
+   2,
+   1
+  ]
+ },
+ {
+  "name": "('', 'x\\ny\\n')",
+  "args": [
+   "",
+   "x\ny\n"
+  ],
+  "want": [
+   2,
+   0
+  ]
+ },
+ {
+  "name": "('same\\n', 'same\\n')",
+  "args": [
+   "same\n",
+   "same\n"
+  ],
+  "want": [
+   0,
+   0
+  ]
+ },
+ {
+  "name": "('\\x00bin', 'text\\n')",
+  "args": [
+   "\u0000bin",
+   "text\n"
+  ],
+  "want": [
+   0,
+   0
+  ]
+ },
+ {
+  "name": "('a\\nb\\n', '')",
+  "args": [
+   "a\nb\n",
+   ""
+  ],
+  "want": [
+   0,
+   2
+  ]
+ }
+]

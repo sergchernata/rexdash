@@ -1,0 +1,30 @@
+[
+ {
+  "name": "Source",
+  "args": [
+   "Source"
+  ],
+  "want": ""
+ },
+ {
+  "name": "DEPLOY",
+  "args": [
+   "DEPLOY"
+  ],
+  "want": ""
+ },
+ {
+  "name": "Test",
+  "args": [
+   "Test"
+  ],
+  "want": ""
+ },
+ {
+  "name": "Approve",
+  "args": [
+   "Approve"
+  ],
+  "want": ""
+ }
+]

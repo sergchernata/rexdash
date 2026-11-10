@@ -1,0 +1,58 @@
+[
+ {
+  "name": "-zsh",
+  "args": [
+   "-zsh"
+  ],
+  "want": true
+ },
+ {
+  "name": "/bin/zsh -l",
+  "args": [
+   "/bin/zsh -l"
+  ],
+  "want": true
+ },
+ {
+  "name": "login -pflq me /bin/zsh",
+  "args": [
+   "login -pflq me /bin/zsh"
+  ],
+  "want": true
+ },
+ {
+  "name": "bash",
+  "args": [
+   "bash"
+  ],
+  "want": true
+ },
+ {
+  "name": "fish",
+  "args": [
+   "fish"
+  ],
+  "want": true
+ },
+ {
+  "name": "bun run dev",
+  "args": [
+   "bun run dev"
+  ],
+  "want": false
+ },
+ {
+  "name": "/Users/me/.local/bin/rexdash git",
+  "args": [
+   "/Users/me/.local/bin/rexdash git"
+  ],
+  "want": false
+ },
+ {
+  "name": "",
+  "args": [
+   ""
+  ],
+  "want": false
+ }
+]

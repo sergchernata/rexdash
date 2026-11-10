@@ -1,0 +1,100 @@
+[
+ {
+  "name": "Succeeded",
+  "args": [
+   "Succeeded"
+  ],
+  "want": "ok"
+ },
+ {
+  "name": "SUCCESS",
+  "args": [
+   "SUCCESS"
+  ],
+  "want": "ok"
+ },
+ {
+  "name": "COMPLETED",
+  "args": [
+   "COMPLETED"
+  ],
+  "want": "ok"
+ },
+ {
+  "name": "APPROVED",
+  "args": [
+   "APPROVED"
+  ],
+  "want": "ok"
+ },
+ {
+  "name": "Failed",
+  "args": [
+   "Failed"
+  ],
+  "want": "bad"
+ },
+ {
+  "name": "TIMED_OUT",
+  "args": [
+   "TIMED_OUT"
+  ],
+  "want": "bad"
+ },
+ {
+  "name": "CHANGES_REQUESTED",
+  "args": [
+   "CHANGES_REQUESTED"
+  ],
+  "want": "bad"
+ },
+ {
+  "name": "STARTUP_FAILURE",
+  "args": [
+   "STARTUP_FAILURE"
+  ],
+  "want": "bad"
+ },
+ {
+  "name": "InProgress",
+  "args": [
+   "InProgress"
+  ],
+  "want": "busy"
+ },
+ {
+  "name": "QUEUED",
+  "args": [
+   "QUEUED"
+  ],
+  "want": "busy"
+ },
+ {
+  "name": "REVIEW_REQUIRED",
+  "args": [
+   "REVIEW_REQUIRED"
+  ],
+  "want": "busy"
+ },
+ {
+  "name": "Superseded",
+  "args": [
+   "Superseded"
+  ],
+  "want": "idle"
+ },
+ {
+  "name": "",
+  "args": [
+   ""
+  ],
+  "want": "idle"
+ },
+ {
+  "name": "SKIPPED",
+  "args": [
+   "SKIPPED"
+  ],
+  "want": "idle"
+ }
+]

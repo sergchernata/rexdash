@@ -1,0 +1,30 @@
+[
+ {
+  "name": "{\"ProviderType\":\"GitHub\",\"Comm",
+  "args": [
+   "{\"ProviderType\":\"GitHub\",\"CommitMessage\":\"Fix login\\n\\nbody\"}"
+  ],
+  "want": "Fix login\n\nbody"
+ },
+ {
+  "name": "Manual rerun",
+  "args": [
+   "Manual rerun"
+  ],
+  "want": "Manual rerun"
+ },
+ {
+  "name": "{\"other\":1}",
+  "args": [
+   "{\"other\":1}"
+  ],
+  "want": "{\"other\":1}"
+ },
+ {
+  "name": "",
+  "args": [
+   ""
+  ],
+  "want": ""
+ }
+]

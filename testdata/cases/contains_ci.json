@@ -1,0 +1,58 @@
+[
+ {
+  "name": "('GET /Inventory 200', 'inventory')",
+  "args": [
+   "GET /Inventory 200",
+   "inventory"
+  ],
+  "want": true
+ },
+ {
+  "name": "('anything', '')",
+  "args": [
+   "anything",
+   ""
+  ],
+  "want": true
+ },
+ {
+  "name": "('abc', 'abcd')",
+  "args": [
+   "abc",
+   "abcd"
+  ],
+  "want": false
+ },
+ {
+  "name": "('Ünïcode ERROR here', 'error')",
+  "args": [
+   "Ünïcode ERROR here",
+   "error"
+  ],
+  "want": true
+ },
+ {
+  "name": "('', '')",
+  "args": [
+   "",
+   ""
+  ],
+  "want": true
+ },
+ {
+  "name": "('abc', 'B')",
+  "args": [
+   "abc",
+   "B"
+  ],
+  "want": true
+ },
+ {
+  "name": "('abc', 'x')",
+  "args": [
+   "abc",
+   "x"
+  ],
+  "want": false
+ }
+]

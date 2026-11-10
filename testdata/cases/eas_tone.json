@@ -1,0 +1,86 @@
+[
+ {
+  "name": "FINISHED",
+  "args": [
+   "FINISHED"
+  ],
+  "want": "ok"
+ },
+ {
+  "name": "SUCCESS",
+  "args": [
+   "SUCCESS"
+  ],
+  "want": "ok"
+ },
+ {
+  "name": "ERRORED",
+  "args": [
+   "ERRORED"
+  ],
+  "want": "bad"
+ },
+ {
+  "name": "FAILURE",
+  "args": [
+   "FAILURE"
+  ],
+  "want": "bad"
+ },
+ {
+  "name": "CANCELED",
+  "args": [
+   "CANCELED"
+  ],
+  "want": "bad"
+ },
+ {
+  "name": "CANCELLED",
+  "args": [
+   "CANCELLED"
+  ],
+  "want": "bad"
+ },
+ {
+  "name": "IN_PROGRESS",
+  "args": [
+   "IN_PROGRESS"
+  ],
+  "want": "busy"
+ },
+ {
+  "name": "NEW",
+  "args": [
+   "NEW"
+  ],
+  "want": "busy"
+ },
+ {
+  "name": "IN_QUEUE",
+  "args": [
+   "IN_QUEUE"
+  ],
+  "want": "busy"
+ },
+ {
+  "name": "PENDING_CANCEL",
+  "args": [
+   "PENDING_CANCEL"
+  ],
+  "want": "busy"
+ },
+ {
+  "name": "ACTION_REQUIRED",
+  "args": [
+   "ACTION_REQUIRED"
+  ],
+  "want": "busy"
+ },
+ {
+  "name": "SKIPPED",
+  "args": [
+   "SKIPPED"
+  ],
+  "want": "idle"
+ }
+]

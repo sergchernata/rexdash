@@ -1,0 +1,58 @@
+[
+ {
+  "name": "'flow'",
+  "args": [
+   "flow"
+  ],
+  "want": "flow"
+ },
+ {
+  "name": "'phoenix/'",
+  "args": [
+   "phoenix/"
+  ],
+  "want": "phoenix/"
+ },
+ {
+  "name": "'a b'",
+  "args": [
+   "a b"
+  ],
+  "want": "'a b'"
+ },
+ {
+  "name": "\"it's\"",
+  "args": [
+   "it's"
+  ],
+  "want": "'it'\\''s'"
+ },
+ {
+  "name": "''",
+  "args": [
+   ""
+  ],
+  "want": "''"
+ },
+ {
+  "name": "'AWS_PROFILE=x'",
+  "args": [
+   "AWS_PROFILE=x"
+  ],
+  "want": "AWS_PROFILE=x"
+ },
+ {
+  "name": "'$HOME'",
+  "args": [
+   "$HOME"
+  ],
+  "want": "'$HOME'"
+ },
+ {
+  "name": "'~/git'",
+  "args": [
+   "~/git"
+  ],
+  "want": "~/git"
+ }
+]

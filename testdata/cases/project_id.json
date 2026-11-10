@@ -1,0 +1,46 @@
+[
+ {
+  "name": "{\"expo\": {\"extra\": {\"eas\": {\"projectId\": \"c259\"}}}}",
+  "args": [
+   {
+    "expo": {
+     "extra": {
+      "eas": {
+       "projectId": "c259"
+      }
+     }
+    }
+   }
+  ],
+  "want": "c259"
+ },
+ {
+  "name": "{\"extra\": {\"eas\": {\"projectId\": \"x\"}}}",
+  "args": [
+   {
+    "extra": {
+     "eas": {
+      "projectId": "x"
+     }
+    }
+   }
+  ],
+  "want": "x"
+ },
+ {
+  "name": "{\"expo\": {}}",
+  "args": [
+   {
+    "expo": {}
+   }
+  ],
+  "want": null
+ },
+ {
+  "name": "{}",
+  "args": [
+   {}
+  ],
+  "want": null
+ }
+]

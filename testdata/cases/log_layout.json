@@ -1,0 +1,73 @@
+[
+ {
+  "name": "truncate",
+  "args": [
+   [
+    "abcdef",
+    "ghij"
+   ],
+   4,
+   false
+  ],
+  "want": [
+   "abcd"
+  ]
+ },
+ {
+  "name": "wrap",
+  "args": [
+   [
+    "abcdef",
+    "ghij"
+   ],
+   4,
+   true
+  ],
+  "want": [
+   "abcd",
+   "  ef",
+   "  gh",
+   "  ij"
+  ]
+ },
+ {
+  "name": "fits",
+  "args": [
+   [
+    "abcdef",
+    "ghij"
+   ],
+   20,
+   true
+  ],
+  "want": [
+   "abcdefghij"
+  ]
+ },
+ {
+  "name": "exact width",
+  "args": [
+   [
+    "abcd"
+   ],
+   4,
+   true
+  ],
+  "want": [
+   "abcd"
+  ]
+ },
+ {
+  "name": "empty",
+  "args": [
+   [
+    ""
+   ],
+   10,
+   true
+  ],
+  "want": [
+   ""
+  ]
+ }
+]

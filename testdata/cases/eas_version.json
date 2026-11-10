@@ -1,0 +1,37 @@
+[
+ {
+  "name": "{\"appVersion\": \"1.2.9\", \"appBuildVersion\": \"94\"}",
+  "args": [
+   {
+    "appVersion": "1.2.9",
+    "appBuildVersion": "94"
+   }
+  ],
+  "want": "1.2.9 (94)"
+ },
+ {
+  "name": "{\"appVersion\": \"1.2.9\"}",
+  "args": [
+   {
+    "appVersion": "1.2.9"
+   }
+  ],
+  "want": "1.2.9"
+ },
+ {
+  "name": "{}",
+  "args": [
+   {}
+  ],
+  "want": ""
+ },
+ {
+  "name": "{\"appBuildVersion\": \"3\"}",
+  "args": [
+   {
+    "appBuildVersion": "3"
+   }
+  ],
+  "want": ""
+ }
+]

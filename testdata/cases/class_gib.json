@@ -1,0 +1,72 @@
+[
+ {
+  "name": "db.t4g.micro",
+  "args": [
+   "db.t4g.micro"
+  ],
+  "want": 1
+ },
+ {
+  "name": "db.t4g.small",
+  "args": [
+   "db.t4g.small"
+  ],
+  "want": 2
+ },
+ {
+  "name": "db.t4g.medium",
+  "args": [
+   "db.t4g.medium"
+  ],
+  "want": 4
+ },
+ {
+  "name": "db.t4g.large",
+  "args": [
+   "db.t4g.large"
+  ],
+  "want": 8
+ },
+ {
+  "name": "db.t4g.xlarge",
+  "args": [
+   "db.t4g.xlarge"
+  ],
+  "want": 16
+ },
+ {
+  "name": "db.m6g.2xlarge",
+  "args": [
+   "db.m6g.2xlarge"
+  ],
+  "want": 32
+ },
+ {
+  "name": "db.r6g.large",
+  "args": [
+   "db.r6g.large"
+  ],
+  "want": 16
+ },
+ {
+  "name": "db.x2g.xlarge",
+  "args": [
+   "db.x2g.xlarge"
+  ],
+  "want": 32
+ },
+ {
+  "name": "db.r5.8xlarge",
+  "args": [
+   "db.r5.8xlarge"
+  ],
+  "want": 256
+ },
+ {
+  "name": "db.serverless",
+  "args": [
+   "db.serverless"
+  ],
+  "want": null
+ }
+]

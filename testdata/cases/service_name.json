@@ -1,0 +1,65 @@
+[
+ {
+  "name": "Amazon Relational Database Service",
+  "args": [
+   "Amazon Relational Database Service"
+  ],
+  "want": "RDS"
+ },
+ {
+  "name": "AmazonCloudWatch",
+  "args": [
+   "AmazonCloudWatch"
+  ],
+  "want": "CloudWatch"
+ },
+ {
+  "name": "AWS Lambda",
+  "args": [
+   "AWS Lambda"
+  ],
+  "want": "Lambda"
+ },
+ {
+  "name": "Amazon CloudFront",
+  "args": [
+   "Amazon CloudFront"
+  ],
+  "want": "CloudFront"
+ },
+ {
+  "name": "EC2 - Other",
+  "args": [
+   "EC2 - Other"
+  ],
+  "want": "EC2 other (EBS, NAT…)"
+ },
+ {
+  "name": "Amazon EC2 Container Registry (ECR)",
+  "args": [
+   "Amazon EC2 Container Registry (ECR)"
+  ],
+  "want": "ECR"
+ },
+ {
+  "name": "Elastic Load Balancing",
+  "args": [
+   "Elastic Load Balancing"
+  ],
+  "want": "Load Balancing"
+ },
+ {
+  "name": "Tax",
+  "args": [
+   "Tax"
+  ],
+  "want": "Tax"
+ },
+ {
+  "name": "AWS Key Management Service",
+  "args": [
+   "AWS Key Management Service"
+  ],
+  "want": "KMS"
+ }
+]
