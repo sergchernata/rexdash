@@ -155,6 +155,8 @@ type svc struct {
 type dbInfo struct {
 	status, class, engine string
 	allocated, max        float64
+	conns                 ConnLimit // max_connections, when known
+	hasConns              bool
 }
 
 type event struct {
@@ -171,6 +173,7 @@ type ecsAPI interface {
 
 type rdsAPI interface {
 	DescribeDBInstances(context.Context, *rds.DescribeDBInstancesInput, ...func(*rds.Options)) (*rds.DescribeDBInstancesOutput, error)
+	ParamsAPI
 }
 
 type cwAPI interface {
@@ -191,6 +194,7 @@ type Infra struct {
 	m                    map[string][]float64
 	used7d               []float64
 	dbi                  *dbInfo
+	params               ConnParams
 	st                   ui.TableState
 }
 
@@ -373,6 +377,13 @@ func (p *Infra) dbState(ctx context.Context) error {
 			engine:    aws.ToString(d.Engine) + " " + aws.ToString(d.EngineVersion),
 			allocated: float64(aws.ToInt32(d.AllocatedStorage)),
 			max:       float64(aws.ToInt32(d.MaxAllocatedStorage)),
+		}
+		if len(d.DBParameterGroups) > 0 {
+			if p.params == nil {
+				p.params = ConnParams{}
+			}
+			group := aws.ToString(d.DBParameterGroups[0].DBParameterGroupName)
+			p.dbi.conns, p.dbi.hasConns = p.params.Limit(ctx, p.rds, group, p.dbi.class)
 		}
 	}
 	return nil
@@ -603,7 +614,11 @@ func (p *Infra) Draw(b *ui.Buffer, area ui.Rect) {
 	}
 	Tile(b, cols[2], MEM, "Memory", Opt(memp, ok), "%", "3h", memSeries, Opt(memp/100, ok))
 	conns, ok := p.last("dbconn")
-	Tile(b, cols[3], PLUG, "Conns", Opt(conns, ok), "", "3h", p.m["dbconn"], nil)
+	unit, ratio := "", (*float64)(nil)
+	if p.dbi != nil && p.dbi.hasConns && p.dbi.conns.N > 0 {
+		unit, ratio = " of "+p.dbi.conns.String(), Opt(conns/p.dbi.conns.N, ok)
+	}
+	Tile(b, cols[3], PLUG, "Conns", Opt(conns, ok), unit, "3h", p.m["dbconn"], ratio)
 
 	// Tasks and events
 	halves := ui.Horizontal(la, 1, ui.Fill(1), ui.Fill(1))

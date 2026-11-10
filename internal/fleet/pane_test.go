@@ -86,9 +86,26 @@ func (f *fakeECS) DescribeServices(_ context.Context, in *ecs.DescribeServicesIn
 }
 
 type fakeRDS struct {
-	dbs   []rdstypes.DBInstance
-	err   error
-	pages int
+	dbs        []rdstypes.DBInstance
+	err        error
+	pages      int
+	params     map[string]string // max_connections by parameter group
+	paramCalls map[string]int
+}
+
+func (f *fakeRDS) DescribeDBParameters(_ context.Context, in *rds.DescribeDBParametersInput, _ ...func(*rds.Options)) (*rds.DescribeDBParametersOutput, error) {
+	group := aws.ToString(in.DBParameterGroupName)
+	if f.paramCalls == nil {
+		f.paramCalls = map[string]int{}
+	}
+	f.paramCalls[group]++
+	v, ok := f.params[group]
+	if !ok {
+		return nil, &smithy.GenericAPIError{Code: "DBParameterGroupNotFound", Message: group}
+	}
+	return &rds.DescribeDBParametersOutput{Parameters: []rdstypes.Parameter{
+		{ParameterName: aws.String("max_connections"), ParameterValue: aws.String(v)},
+	}}, nil
 }
 
 func (f *fakeRDS) DescribeDBInstances(_ context.Context, in *rds.DescribeDBInstancesInput, _ ...func(*rds.Options)) (*rds.DescribeDBInstancesOutput, error) {
@@ -149,7 +166,8 @@ func service(name string, running, desired, pending int32, rollout ecstypes.Depl
 
 func instance(id, class, status string, gb int32) rdstypes.DBInstance {
 	return rdstypes.DBInstance{DBInstanceIdentifier: aws.String(id), DBInstanceClass: aws.String(class),
-		DBInstanceStatus: aws.String(status), AllocatedStorage: aws.Int32(gb)}
+		DBInstanceStatus: aws.String(status), AllocatedStorage: aws.Int32(gb),
+		DBParameterGroups: []rdstypes.DBParameterGroupStatus{{DBParameterGroupName: aws.String("pg-" + class)}}}
 }
 
 const gb = float64(gib)
@@ -173,6 +191,9 @@ func sample() (*fakeECS, *fakeRDS, *fakeCW) {
 		instance("gamma", "db.serverless", "stopped", 20),
 		instance("beta", "db.r6g.large", "modifying", 50),
 		instance("alpha", "db.t4g.medium", "available", 100),
+	}, params: map[string]string{
+		"pg-db.t4g.medium": "LEAST({DBInstanceClassMemory/9531392},5000)",
+		"pg-db.r6g.large":  "5",
 	}}
 	c := &fakeCW{m: map[string][]float64{
 		"s0c": {10, 30, 40, 50}, "s0m": {30, 40},
@@ -431,5 +452,77 @@ func TestFailedMetricsDontMisalignRows(t *testing.T) {
 	}
 	if len(p.m) != 0 {
 		t.Errorf("kept %d stale metric series after a failed metrics load", len(p.m))
+	}
+}
+
+// Connections read as a count out of each database's limit; each parameter group is read once.
+func TestConnectionsShowLimit(t *testing.T) {
+	e, r, c := sample()
+	p := newPane(e, r, c)
+	for range 2 {
+		if err := p.Refresh(); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for group, n := range r.paramCalls {
+		if n != 1 {
+			t.Errorf("%s read %d times", group, n)
+		}
+	}
+	b := draw(p)
+	for _, c := range []struct {
+		db, want string
+		color    ui.Color
+	}{
+		{"alpha", "4/~450", ui.Green()}, // t4g.medium formula
+		{"beta", "1/5", ui.Green()},
+	} {
+		if st := styleInRow(t, b, c.db, c.want); st.Fg != c.color {
+			t.Errorf("%s: count drawn %v, want %v", c.db, st.Fg, c.color)
+		}
+	}
+	// gamma's group can't be read: no limit, and no failure.
+	_, y := find(t, b, "gamma")
+	if row := strings.Split(b.Text(), "\n")[y]; strings.Contains(row, "/") {
+		t.Errorf("gamma shows a limit: %q", row)
+	}
+}
+
+// A pool near its limit is flagged red.
+func TestConnectionsNearLimitAreRed(t *testing.T) {
+	e, r, c := sample()
+	r.params["pg-db.r6g.large"] = "1"
+	p := newPane(e, r, c)
+	if err := p.Refresh(); err != nil {
+		t.Fatal(err)
+	}
+	if st := styleInRow(t, draw(p), "beta", "1/1"); st.Fg != ui.Red() {
+		t.Errorf("full pool drawn %v, want red", st.Fg)
+	}
+}
+
+// styleInRow is the style of s within the row that shows name.
+func styleInRow(t *testing.T, b *ui.Buffer, name, s string) ui.Style {
+	t.Helper()
+	_, y := find(t, b, name)
+	row := []rune(strings.Split(b.Text(), "\n")[y])
+	i := strings.Index(string(row), s)
+	if i < 0 {
+		t.Fatalf("%s: %q not in %q", name, s, string(row))
+	}
+	return b.StyleAt(len([]rune(string(row)[:i])), y)
+}
+
+// In a narrow pane the connection trend is dropped so database names stay readable.
+func TestNarrowPaneKeepsDatabaseNames(t *testing.T) {
+	e, r, c := sample()
+	p := newPane(e, r, c)
+	if err := p.Refresh(); err != nil {
+		t.Fatal(err)
+	}
+	b := ui.NewBuffer(90, 20)
+	p.Draw(b, b.Area())
+	if st := styleInRow(t, b, "alpha", "4/~450"); st.Fg != ui.Green() {
+		t.Errorf("count drawn %v", st.Fg)
 	}
 }

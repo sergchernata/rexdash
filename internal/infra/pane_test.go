@@ -62,8 +62,11 @@ func (f *fakeECS) DescribeTasks(_ context.Context, in *ecs.DescribeTasksInput, _
 }
 
 type fakeRDS struct {
-	db  *rdstypes.DBInstance
-	err error
+	db         *rdstypes.DBInstance
+	err        error
+	params     map[string]string // max_connections by parameter group
+	paramErr   error
+	paramCalls map[string]int
 }
 
 func (f *fakeRDS) DescribeDBInstances(_ context.Context, in *rds.DescribeDBInstancesInput, _ ...func(*rds.Options)) (*rds.DescribeDBInstancesOutput, error) {

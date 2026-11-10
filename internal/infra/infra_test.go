@@ -48,5 +48,9 @@ func TestLoadThresholds(t *testing.T) {
 func TestShared(t *testing.T) {
 	cases.Check(t, "class_gib", func(a []any) any { return cases.Opt(ClassGiB(cases.S(a[0]))) })
 	cases.Check(t, "per_day", func(a []any) any { return cases.Opt(PerDay(cases.Floats(a[0]))) })
+	cases.Check(t, "max_conns", func(a []any) any {
+		l, ok := MaxConns(cases.S(a[0]), cases.S(a[1]))
+		return cases.Opt(l.String(), ok)
+	})
 	cases.Check(t, "load_level", func(a []any) any { return LoadLevel(cases.F(a[0])).String() })
 }

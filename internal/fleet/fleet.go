@@ -42,6 +42,8 @@ type svc struct {
 type db struct {
 	id, class, status string
 	allocated         float64
+	conns             infra.ConnLimit // max_connections, when known
+	hasConns          bool
 }
 
 // Spark is "▁▃▅█" for a series. Percentages draw against 0–top; counts (top nil) against their
@@ -78,6 +80,7 @@ type ecsAPI interface {
 
 type rdsAPI interface {
 	DescribeDBInstances(context.Context, *rds.DescribeDBInstancesInput, ...func(*rds.Options)) (*rds.DescribeDBInstancesOutput, error)
+	infra.ParamsAPI
 }
 
 type cwAPI interface {
@@ -93,6 +96,7 @@ type Fleet struct {
 	cw     cwAPI
 	svcs   []svc
 	dbs    []db
+	params infra.ConnParams
 	m      map[string][]float64
 	sel    int
 	loaded bool
@@ -224,12 +228,20 @@ func (p *Fleet) loadRDS(ctx context.Context) error {
 			return infra.Err(err)
 		}
 		for _, d := range r.DBInstances {
-			dbs = append(dbs, db{
+			x := db{
 				id:        aws.ToString(d.DBInstanceIdentifier),
 				class:     aws.ToString(d.DBInstanceClass),
 				status:    aws.ToString(d.DBInstanceStatus),
 				allocated: float64(aws.ToInt32(d.AllocatedStorage)),
-			})
+			}
+			if len(d.DBParameterGroups) > 0 {
+				if p.params == nil {
+					p.params = infra.ConnParams{}
+				}
+				group := aws.ToString(d.DBParameterGroups[0].DBParameterGroupName)
+				x.conns, x.hasConns = p.params.Limit(ctx, p.rds, group, x.class)
+			}
+			dbs = append(dbs, x)
 		}
 	}
 	slices.SortStableFunc(dbs, func(a, b db) int { return cmp.Compare(a.id, b.id) })
@@ -415,6 +427,11 @@ func (p *Fleet) Draw(b *ui.Buffer, area ui.Rect) {
 
 	// RDS instances
 	rows = nil
+	// Room for the connections trend: the fixed columns plus a readable name.
+	trend, connW := parts[1].W >= 120, 24
+	if !trend {
+		connW = 10
+	}
 	for i, d := range p.dbs {
 		ok := d.status == "available"
 		icon, color := ui.RUNNING.S(), ui.Yellow()
@@ -445,14 +462,32 @@ func (p *Fleet) Draw(b *ui.Buffer, area ui.Rect) {
 			pctCell(cpu, cok, p.m[fmt.Sprintf("d%dc", i)]),
 			pctCell(memLast, len(mem) > 0, mem),
 			storage,
-			ui.L(ui.T(fmt.Sprintf("%4.0f ", connLast)), ui.C(Spark(conns, nil), ui.Blue())),
+			connCell(connLast, d, conns, trend),
 		}})
 	}
 	ui.Table{
-		Cols:    []ui.Constraint{ui.Len(1), ui.Fill(1), ui.Len(10), ui.Len(18), ui.Len(18), ui.Len(12), ui.Len(17)},
+		Cols:    []ui.Constraint{ui.Len(1), ui.Fill(1), ui.Len(10), ui.Len(18), ui.Len(18), ui.Len(12), ui.Len(connW)},
 		Header:  h("", "Database", "Class", "CPU · 1h", "Memory · 1h", "Storage", "Connections"),
 		Rows:    rows,
 		Spacing: 2,
 		Block:   &ui.Panel{Title: ui.LT(fmt.Sprintf(" %s RDS ", DB.S()), ui.Style{})},
 	}.Draw(b, parts[1], nil)
+}
+
+// connCell is "count/limit ▁▃▅": the count coloured by how full the pool is, when the limit is known.
+// The trend is left out when trend is false (a narrow pane).
+func connCell(last float64, d db, series []float64, trend bool) ui.Line {
+	count := fmt.Sprintf("%.0f", last)
+	var line ui.Line
+	if !d.hasConns || d.conns.N <= 0 {
+		line = ui.L(ui.T(fmt.Sprintf("%10s", count)))
+	} else {
+		limit := "/" + d.conns.String()
+		pad := strings.Repeat(" ", max(0, 10-len(count)-len(limit)))
+		line = ui.L(ui.T(pad), ui.C(count, infra.LoadColor(last/d.conns.N*100)), ui.C(limit, ui.Muted()))
+	}
+	if trend {
+		line.Spans = append(line.Spans, ui.T(" "), ui.C(Spark(series, nil), ui.Blue()))
+	}
+	return line
 }

@@ -1,0 +1,106 @@
+[
+ {
+  "name": "fixed",
+  "args": [
+   "100",
+   "db.t4g.small"
+  ],
+  "want": "100"
+ },
+ {
+  "name": "formula medium",
+  "args": [
+   "LEAST({DBInstanceClassMemory/9531392},5000)",
+   "db.t4g.medium"
+  ],
+  "want": "~450"
+ },
+ {
+  "name": "formula xlarge",
+  "args": [
+   "LEAST({DBInstanceClassMemory/9531392},5000)",
+   "db.t4g.xlarge"
+  ],
+  "want": "~1802"
+ },
+ {
+  "name": "formula capped",
+  "args": [
+   "LEAST({DBInstanceClassMemory/9531392},5000)",
+   "db.r6g.8xlarge"
+  ],
+  "want": "~5000"
+ },
+ {
+  "name": "bare formula",
+  "args": [
+   "{DBInstanceClassMemory/12582880}",
+   "db.t4g.large"
+  ],
+  "want": "~682"
+ },
+ {
+  "name": "greatest",
+  "args": [
+   "GREATEST({DBInstanceClassMemory/9531392},200)",
+   "db.t4g.micro"
+  ],
+  "want": "~200"
+ },
+ {
+  "name": "spaces",
+  "args": [
+   "LEAST( {DBInstanceClassMemory/9531392} , 5000 )",
+   "db.t4g.medium"
+  ],
+  "want": "~450"
+ },
+ {
+  "name": "unknown class",
+  "args": [
+   "LEAST({DBInstanceClassMemory/9531392},5000)",
+   "db.serverless"
+  ],
+  "want": null
+ },
+ {
+  "name": "fixed on serverless",
+  "args": [
+   "500",
+   "db.serverless"
+  ],
+  "want": "500"
+ },
+ {
+  "name": "empty",
+  "args": [
+   "",
+   "db.t4g.medium"
+  ],
+  "want": null
+ },
+ {
+  "name": "unknown variable",
+  "args": [
+   "{EndPointPort/2}",
+   "db.t4g.medium"
+  ],
+  "want": null
+ },
+ {
+  "name": "zero divisor",
+  "args": [
+   "{DBInstanceClassMemory/0}",
+   "db.t4g.medium"
+  ],
+  "want": null
+ },
+ {
+  "name": "garbage",
+  "args": [
+   "LEAST(",
+   "db.t4g.medium"
+  ],
+  "want": null
+ }
+]
