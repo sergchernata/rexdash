@@ -58,6 +58,14 @@ func rexBin() string {
 }
 
 // rex runs a rex command without starting a server that isn't running.
+// Outside access, swappable in tests: Rex's CLI, the process table and working directories.
+var (
+	rexCall   = rex
+	listProcs = processes
+	procCwds  = cwds
+	logf      = func(format string, a ...any) { fmt.Fprintf(os.Stderr, format, a...) }
+)
+
 func rex(args ...string) (map[string]any, error) {
 	out, err := exec.Command(rexBin(), append([]string{"--autostart=false", "--timeout", "5s"}, args...)...).Output()
 	if err != nil {
@@ -250,25 +258,25 @@ func childPid(p map[string]any) int {
 
 // capture records every pane in every session: block id → what it runs.
 func capture(kids children) (map[string]any, error) {
-	status, err := rex("server", "status", "--json")
+	status, err := rexCall("server", "status", "--json")
 	if err != nil {
 		return nil, err
 	}
-	procs := processes()
+	procs := listProcs()
 	blocks := map[string]any{}
 	type fgOf struct {
 		block string
 		fg    int
 	}
 	var fgs []fgOf
-	sessions, err := rex("session", "ls", "--json")
+	sessions, err := rexCall("session", "ls", "--json")
 	if err != nil {
 		return nil, err
 	}
 	list, _ := sessions["sessions"].([]any)
 	for _, s := range list {
 		sid := str(s.(map[string]any)["session_id"])
-		bl, err := rex("block", "ls", "-s", sid, "--json")
+		bl, err := rexCall("block", "ls", "-s", sid, "--json")
 		if err != nil {
 			return nil, err
 		}
@@ -278,7 +286,7 @@ func capture(kids children) (map[string]any, error) {
 			bid := str(b["block_id"])
 			child, ok := kids[bid]
 			if _, alive := procs[child]; !ok || !alive {
-				p, err := rex("block", "call", "-s", sid, "-b", bid, "process")
+				p, err := rexCall("block", "call", "-s", sid, "-b", bid, "process")
 				if err != nil {
 					continue
 				}
@@ -305,7 +313,7 @@ func capture(kids children) (map[string]any, error) {
 	for i, f := range fgs {
 		pids[i] = f.fg
 	}
-	dirs := cwds(pids)
+	dirs := procCwds(pids)
 	for _, f := range fgs {
 		what := classify(f.fg, procs[f.fg].args, dirs[f.fg])
 		m := blocks[f.block].(map[string]any)
@@ -335,7 +343,7 @@ func load() map[string]any { return readJSON(snapshotPath()) }
 
 // relaunch starts each recorded program in its pane, if that pane is now an idle shell.
 func relaunch(snap map[string]any) int {
-	procs := processes()
+	procs := listProcs()
 	n := 0
 	blocks, _ := snap["blocks"].(map[string]any)
 	for bid, x := range blocks {
@@ -345,7 +353,7 @@ func relaunch(snap map[string]any) int {
 			continue
 		}
 		sid := str(v["session"])
-		p, err := rex("block", "call", "-s", sid, "-b", bid, "process")
+		p, err := rexCall("block", "call", "-s", sid, "-b", bid, "process")
 		if err != nil {
 			continue
 		}
@@ -364,7 +372,7 @@ func relaunch(snap map[string]any) int {
 		if enter {
 			cmd += "\n"
 		}
-		if _, err := rex("send", "-s", sid, "-b", bid, cmd); err == nil {
+		if _, err := rexCall("send", "-s", sid, "-b", bid, cmd); err == nil {
 			n++
 		}
 	}
@@ -373,7 +381,7 @@ func relaunch(snap map[string]any) int {
 
 // tidy removes pane records whose process has exited.
 func tidy() {
-	procs := processes()
+	procs := listProcs()
 	entries, _ := os.ReadDir(paneDir())
 	for _, e := range entries {
 		pid, _ := strconv.Atoi(strings.TrimSuffix(e.Name(), ".json"))
@@ -392,6 +400,43 @@ func exeStamp() string {
 	return fmt.Sprintf("%d %d", fi.Size(), fi.ModTime().UnixNano())
 }
 
+// Waits around a relaunch, swappable in tests.
+var (
+	settle  = 4 * time.Second  // after a restart, for Rex's shells to start
+	startup = 10 * time.Second // after relaunching, before recording again
+	every   = 30 * time.Second
+)
+
+// step is one agent pass: if Rex restarted since the last record, relaunch from it first;
+// then record what every pane runs and tidy stale pane records. It does nothing while Rex is down.
+func step(kids children) children {
+	status, err := rexCall("server", "status", "--json")
+	if err != nil {
+		return kids
+	}
+	instance := str(status["instance_id"])
+	prev := load()
+	recorded := ""
+	if prev != nil {
+		recorded = str(prev["instance"])
+	}
+	if recorded != "" && recorded != instance {
+		// Rex restarted. Give its shells a moment to start, then bring the programs back.
+		time.Sleep(settle)
+		logf("rexdash session: relaunched %d panes after restart\n", relaunch(prev))
+		// Let them start before recording, so the next record isn't a page of idle shells.
+		time.Sleep(startup)
+		kids = children{}
+	}
+	if snap, err := capture(kids); err == nil {
+		_ = save(snap)
+	} else {
+		logf("rexdash session: %v\n", err)
+	}
+	tidy()
+	return kids
+}
+
 // agent records every 30s; after a new Rex server starts, it relaunches from the last record first.
 func agent() error {
 	start := exeStamp()
@@ -401,29 +446,8 @@ func agent() error {
 		if exeStamp() != start {
 			return nil
 		}
-		if status, err := rex("server", "status", "--json"); err == nil {
-			instance := str(status["instance_id"])
-			prev := load()
-			recorded := ""
-			if prev != nil {
-				recorded = str(prev["instance"])
-			}
-			if recorded != "" && recorded != instance {
-				// Rex restarted. Give its shells a moment to start, then bring the programs back.
-				time.Sleep(4 * time.Second)
-				fmt.Fprintf(os.Stderr, "rexdash session: relaunched %d panes after restart\n", relaunch(prev))
-				// Let them start before recording, so the next record isn't a page of idle shells.
-				time.Sleep(10 * time.Second)
-				kids = children{}
-			}
-			if snap, err := capture(kids); err == nil {
-				_ = save(snap)
-			} else {
-				fmt.Fprintf(os.Stderr, "rexdash session: %v\n", err)
-			}
-			tidy()
-		}
-		time.Sleep(30 * time.Second)
+		kids = step(kids)
+		time.Sleep(every)
 	}
 }
 
@@ -444,8 +468,25 @@ func install() error {
 	if rexPath == "" {
 		return errors.New("rex not found on PATH")
 	}
-	esc := func(s string) string { return strings.NewReplacer("&", "&amp;", "<", "&lt;").Replace(s) }
-	plist := fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
+	plist := plistXML(exe, rexPath, home())
+	if err := os.MkdirAll(filepath.Dir(plistPath()), 0o755); err != nil {
+		return err
+	}
+	if err := os.WriteFile(plistPath(), []byte(plist), 0o644); err != nil {
+		return err
+	}
+	unload()
+	if out, err := exec.Command("launchctl", "bootstrap", domain(), plistPath()).CombinedOutput(); err != nil {
+		return fmt.Errorf("launchctl: %s", strings.TrimSpace(string(out)))
+	}
+	fmt.Printf("installed %s (log: ~/Library/Logs/rexdash-session.log)\n", plistPath())
+	return nil
+}
+
+// plistXML is the launchd agent definition: run `exe session agent`, keep it alive, log to ~/Library/Logs.
+func plistXML(exe, rexPath, homeDir string) string {
+	esc := func(s string) string { return strings.NewReplacer("&", "&amp;", "<", "&lt;", ">", "&gt;").Replace(s) }
+	return fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
@@ -459,19 +500,7 @@ func install() error {
   <key>StandardErrorPath</key><string>%s/Library/Logs/rexdash-session.log</string>
 </dict>
 </plist>
-`, label, esc(exe), esc(rexPath), esc(home()))
-	if err := os.MkdirAll(filepath.Dir(plistPath()), 0o755); err != nil {
-		return err
-	}
-	if err := os.WriteFile(plistPath(), []byte(plist), 0o644); err != nil {
-		return err
-	}
-	unload()
-	if out, err := exec.Command("launchctl", "bootstrap", domain(), plistPath()).CombinedOutput(); err != nil {
-		return fmt.Errorf("launchctl: %s", strings.TrimSpace(string(out)))
-	}
-	fmt.Printf("installed %s (log: ~/Library/Logs/rexdash-session.log)\n", plistPath())
-	return nil
+`, label, esc(exe), esc(rexPath), esc(homeDir))
 }
 
 // unload stops a loaded agent and waits until launchd has let go of it: bootstrapping
