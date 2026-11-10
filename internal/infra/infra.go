@@ -39,16 +39,8 @@ var (
 
 const gib = 1 << 30
 
-// LoadColor is green / yellow / red by how full something is.
-func LoadColor(pct float64) ui.Color {
-	switch LoadLevel(pct) {
-	case ui.ToneBad:
-		return ui.Red()
-	case ui.ToneBusy:
-		return ui.Yellow()
-	}
-	return ui.Green()
-}
+// LoadColor shades from green through yellow and orange to red as something fills up.
+func LoadColor(pct float64) ui.Color { return ui.Heat(pct) }
 
 // LoadLevel is how full: ok below 70%, busy from 70%, bad from 85%.
 func LoadLevel(pct float64) ui.Tone {

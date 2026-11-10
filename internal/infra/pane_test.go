@@ -257,7 +257,7 @@ func TestRefreshHealthy(t *testing.T) {
 	for _, c := range []struct {
 		val  string
 		want ui.Color
-	}{{"30%", ui.Green()}, {"60%", ui.Green()}, {"75%", ui.Yellow()}, {"88%", ui.Red()}} {
+	}{{"30%", ui.Green()}, {"60%", ui.Heat(60)}, {"75%", ui.Heat(75)}, {"88%", ui.Heat(88)}} {
 		x, y := find(t, b, c.val)
 		if st := b.StyleAt(x, y); st.Fg != c.want || !st.Bold {
 			t.Errorf("%s: style %+v, want %v", c.val, st, c.want)
@@ -324,8 +324,8 @@ func TestAppStorageTileWithContainerInsights(t *testing.T) {
 	find(t, b, "App storage")
 	find(t, b, "ephemeral · 3h")
 	x, y := find(t, b, "91%")
-	if b.StyleAt(x, y).Fg != ui.Red() {
-		t.Error("91% app storage should be red")
+	if b.StyleAt(x, y).Fg != ui.Heat(91) {
+		t.Error("91% app storage should be shaded near red")
 	}
 	// Before anything has loaded the tile keeps its place.
 	if !strings.Contains(draw(newPane(e, r, c)).Text(), "App storage") {

@@ -273,7 +273,7 @@ func TestRefreshAndDraw(t *testing.T) {
 	for _, c := range []struct {
 		s    string
 		want ui.Color
-	}{{"1/2", ui.Red()}, {"2/2", ui.Green()}, {"95%", ui.Red()}, {"75%", ui.Yellow()}, {"50%", ui.Green()}} {
+	}{{"1/2", ui.Red()}, {"2/2", ui.Green()}, {"95%", ui.Red()}, {"75%", ui.Heat(75)}, {"50%", ui.Green()}} {
 		x, y := find(t, b, c.s)
 		if st := b.StyleAt(x, y); st.Fg != c.want {
 			t.Errorf("%s: %v want %v", c.s, st.Fg, c.want)

@@ -270,3 +270,35 @@ func AddBg() Color {
 func DelBg() Color {
 	return blend(func(t *theme) rgb { return mixRGB(t.bg, t.ansi[1], 0.18) }, tcell.PaletteColor(52))
 }
+
+// Heat is the colour for how full something is, in percent: green up to half full, then
+// shading through yellow (70%) and orange (85%) to red (95% and over). Without a Rex theme
+// it steps through the terminal's named colours instead.
+func Heat(pct float64) Color {
+	t := getTheme()
+	if t == nil {
+		switch {
+		case pct >= 95:
+			return Red()
+		case pct >= 85:
+			return tcell.ColorDarkOrange
+		case pct >= 70:
+			return Yellow()
+		}
+		return Green()
+	}
+	green, yellow, red := t.ansi[2], t.ansi[3], t.ansi[1]
+	stops := []struct {
+		at float64
+		c  rgb
+	}{{50, green}, {70, yellow}, {85, mixRGB(yellow, red, 0.5)}, {95, red}}
+	if pct <= stops[0].at {
+		return tc(green)
+	}
+	for i := 1; i < len(stops); i++ {
+		if a, b := stops[i-1], stops[i]; pct <= b.at {
+			return tc(mixRGB(a.c, b.c, (pct-a.at)/(b.at-a.at)))
+		}
+	}
+	return tc(red)
+}

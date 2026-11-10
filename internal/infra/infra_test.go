@@ -40,7 +40,7 @@ func TestStorageGrowthPerDay(t *testing.T) {
 }
 
 func TestLoadThresholds(t *testing.T) {
-	if LoadColor(10) != ui.Green() || LoadColor(70) != ui.Yellow() || LoadColor(85) != ui.Red() {
+	if LoadColor(10) != ui.Green() || LoadColor(70) != ui.Yellow() || LoadColor(95) != ui.Red() {
 		t.Error("load colours")
 	}
 }
