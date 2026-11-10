@@ -422,14 +422,15 @@ func (v *TextView) Key(ev *tcell.EventKey) bool {
 }
 
 func (v *TextView) Draw(b *Buffer, r Rect) {
-	pos := fmt.Sprintf(" %d/%d ", min(v.Top+v.height, len(v.Lines)), len(v.Lines))
-	p := Panel{
-		Title:  L(C(" "+v.Icon.S()+" ", Accent()), C(v.Title, Accent()), T(" ")),
-		Bottom: LT(pos, Fg(Muted())),
+	p := Panel{Title: L(C(" "+v.Icon.S()+" ", Accent()), C(v.Title, Accent()), T(" "))}
+	// Size and clamp before the counter, so it matches this frame (not the previous one).
+	v.height = p.Inner(r).H
+	if r.W < 2 || r.H < 2 {
+		v.height = 0
 	}
-	in := p.Draw(b, r)
-	v.height = in.H
 	v.Top = min(v.Top, max(0, len(v.Lines)-v.height))
+	p.Bottom = LT(fmt.Sprintf(" %d/%d ", min(v.Top+v.height, len(v.Lines)), len(v.Lines)), Fg(Muted()))
+	in := p.Draw(b, r)
 	end := min(len(v.Lines), v.Top+v.height)
 	Paragraph(b, in, v.Lines[min(v.Top, end):end], false)
 	Scrollbar(b, r, len(v.Lines), v.Top, v.height)

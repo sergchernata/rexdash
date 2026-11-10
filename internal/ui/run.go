@@ -56,7 +56,6 @@ func report(name string, st Status) {
 	fmt.Fprintf(out, "\x1b]2;%s\x07\x1b]7501;state=%s:app=rexdash:title=%s:msg=%s\x1b\\", name, st.State, B64(name), B64(st.Msg))
 }
 
-// Run shows a pane until Ctrl-C. When a new build replaces this binary, it restarts into it.
 var traceOn = os.Getenv("REXDASH_TRACE") != ""
 
 func trace(msg string) {
@@ -68,6 +67,7 @@ func trace(msg string) {
 	}
 }
 
+// Run shows a pane until Ctrl-C. When a new build replaces this binary, it restarts into it.
 func Run(p Pane) error {
 	trace("start")
 	scr, err := tcell.NewScreen()
@@ -78,6 +78,31 @@ func Run(p Pane) error {
 		return err
 	}
 	trace("init done")
+	exe, _ := os.Executable()
+	return run(scr, p, runOpts{
+		exe:        exe,
+		watchDirs:  watchDirs,
+		watchTheme: WatchTheme,
+		watchExe:   watchExe,
+		zoom:       func() { RexZoom(nil) },
+		reexec:     Reexec,
+	})
+}
+
+// runOpts are Run's side effects, so tests can drive the loop on a simulation screen
+// with their own watcher channels and without exec'ing anything.
+type runOpts struct {
+	exe        string // this binary; "" disables the upgrade watch and restart
+	watchDirs  func(dirs []string, ch chan<- struct{})
+	watchTheme func(ch chan<- struct{})
+	watchExe   func(exe string, ch chan<- struct{})
+	zoom       func()
+	reexec     func(exe string, args []string) error
+}
+
+// run shows p on an initialised screen until Ctrl-C or an upgrade, then finalises it.
+func run(scr tcell.Screen, p Pane, o runOpts) error {
+	prevOut := out
 	if tty, ok := scr.Tty(); ok {
 		out = tty
 	}
@@ -96,15 +121,17 @@ func Run(p Pane) error {
 	changed := make(chan struct{}, 1)
 	dirs := p.Watch()
 	live := len(dirs) > 0
-	if live {
-		watchDirs(dirs, changed)
+	if live && o.watchDirs != nil {
+		o.watchDirs(dirs, changed)
 	}
 	themed := make(chan struct{}, 1)
-	WatchTheme(themed)
+	if o.watchTheme != nil {
+		o.watchTheme(themed)
+	}
 	upgraded := make(chan struct{}, 1)
-	exe, _ := os.Executable()
-	if exe != "" {
-		watchExe(exe, upgraded)
+	exe := o.exe
+	if exe != "" && o.watchExe != nil {
+		o.watchExe(exe, upgraded)
 	}
 
 	timer := time.NewTimer(0)
@@ -182,7 +209,9 @@ loop:
 						continue
 					}
 					if IsRune(ev, 'z') {
-						RexZoom(nil)
+						if o.zoom != nil {
+							o.zoom()
+						}
 						continue
 					}
 				}
@@ -195,10 +224,10 @@ loop:
 	trace("fini")
 	scr.Fini()
 	trace("fini done")
-	out = os.Stdout
-	if upgrade && exe != "" {
+	out = prevOut
+	if upgrade && exe != "" && o.reexec != nil {
 		trace("exec")
-		err := Reexec(exe, os.Args)
+		err := o.reexec(exe, os.Args)
 		trace("exec returned: " + err.Error())
 		return fmt.Errorf("restart after upgrade failed: %w", err)
 	}
