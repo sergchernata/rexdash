@@ -154,3 +154,17 @@ func TestStatusMarkersHaveNoBackground(t *testing.T) {
 	l.Key(tcell.NewEventKey(tcell.KeyUp, 0, 0))
 	check("Paused")
 }
+
+// The filter opens with f (shown in the footer) and with / for vi habits.
+func TestFilterKeys(t *testing.T) {
+	for _, r := range "f/" {
+		l := &Logs{}
+		l.Key(key(r))
+		if !l.Typing() {
+			t.Errorf("%q did not open the filter", r)
+		}
+	}
+	if h := (&Logs{}).Hints()[0]; h.Key != "f" || h.Desc != "filter" {
+		t.Errorf("first hint %+v, want f filter", h)
+	}
+}

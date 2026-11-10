@@ -236,7 +236,7 @@ func (l *Logs) Hints() []ui.Hint {
 	if l.typing {
 		return []ui.Hint{{Key: "⏎", Desc: "keep"}, {Key: "esc", Desc: "clear"}}
 	}
-	return []ui.Hint{{Key: "/", Desc: "filter"}, {Key: "e", Desc: "errors"}, {Key: "w", Desc: "wrap"}, {Key: "↑↓", Desc: "scroll"}, {Key: "G", Desc: "live"}, {Key: "c", Desc: "clear"}}
+	return []ui.Hint{{Key: "f", Desc: "filter"}, {Key: "e", Desc: "errors"}, {Key: "w", Desc: "wrap"}, {Key: "↑↓", Desc: "scroll"}, {Key: "G", Desc: "live"}, {Key: "c", Desc: "clear"}}
 }
 
 func (l *Logs) Status() ui.Status {
@@ -336,7 +336,7 @@ func (l *Logs) Key(ev *tcell.EventKey) error {
 		r = ev.Rune()
 	}
 	switch {
-	case r == '/':
+	case r == 'f' || r == '/':
 		l.typing = true
 	case key == tcell.KeyEscape && l.filter != "":
 		l.filter = ""

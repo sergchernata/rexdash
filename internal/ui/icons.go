@@ -167,8 +167,6 @@ func KeyIcon(k string) string {
 		return "\U000f12b7"
 	case "space":
 		return "\U000f1050"
-	case "/":
-		return ""
 	}
 	return k
 }
