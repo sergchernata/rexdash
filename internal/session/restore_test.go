@@ -109,7 +109,7 @@ func TestRelaunchStartsRecordedProgramsInIdlePanes(t *testing.T) {
 		t.Errorf("relaunched %d panes, want 3", n)
 	}
 	want := map[string]string{
-		"b-claude": "cd /w/app && claude --resume sess-1\n",
+		"b-claude": "cd /w/app && (claude --resume sess-1 || claude)\n",
 		"b-dash":   "cd /w/infra && AWS_PROFILE=prod rexdash logs app --stream web/\n",
 		"b-dev":    "cd /w/web && bun run dev",
 	}

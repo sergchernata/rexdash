@@ -9,7 +9,7 @@
    }
   ],
   "want": [
-   "cd /Users/me && claude --resume 1a2b3c4d",
+   "cd /Users/me && (claude --resume 1a2b3c4d || claude)",
    true
   ]
  },
@@ -80,7 +80,7 @@
    }
   ],
   "want": [
-   "claude --resume s",
+   "(claude --resume s || claude)",
    true
   ]
  },

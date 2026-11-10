@@ -199,7 +199,8 @@ func relaunchCommand(v map[string]any) (string, bool, bool) {
 		if !ok {
 			return "", false, false
 		}
-		return cd + "claude --resume " + shQuote(id), true, true
+		// A Claude pane nobody typed in has no saved conversation: start a fresh one instead.
+		return cd + "(claude --resume " + shQuote(id) + " || claude)", true, true
 	case "rexdash":
 		argv, ok := v["argv"].([]any)
 		if !ok {
