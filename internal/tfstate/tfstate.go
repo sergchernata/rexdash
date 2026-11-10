@@ -206,12 +206,18 @@ func shortAddr(a string) string {
 	return a
 }
 
+// s3API is the part of the S3 client the pane calls (a fake in tests).
+type s3API interface {
+	ListObjectVersions(context.Context, *s3.ListObjectVersionsInput, ...func(*s3.Options)) (*s3.ListObjectVersionsOutput, error)
+	GetObject(context.Context, *s3.GetObjectInput, ...func(*s3.Options)) (*s3.GetObjectOutput, error)
+}
+
 type Terraform struct {
 	ui.Base
 	every       time.Duration
 	bucket, key string
 	region      string
-	s3          *s3.Client
+	s3          s3API
 	snaps       map[string]snap // by version id
 	vers        []ver
 	lock        *lockInfo
@@ -341,10 +347,14 @@ func (t *Terraform) Refresh() error {
 		errs []error
 		sem  = make(chan struct{}, 4)
 	)
+	// Pick the new versions before starting, so no worker writes t.snaps while it's read here.
+	var todo []item
 	for _, it := range list {
-		if _, ok := t.snaps[it.id]; ok {
-			continue
+		if _, ok := t.snaps[it.id]; !ok {
+			todo = append(todo, it)
 		}
+	}
+	for _, it := range todo {
 		wg.Go(func() {
 			sem <- struct{}{}
 			defer func() { <-sem }()
