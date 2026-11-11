@@ -2,7 +2,7 @@
 // which hands these commands off so only AWS panes pay for loading the SDK.
 //
 //	rexdash pipeline NAME [-i SECS]                    CodePipeline stages, runs, build logs
-//	rexdash infra    CLUSTER [SERVICE] [DB] [-i SECS]  ECS + RDS health, tasks, events
+//	rexdash infra    CLUSTER [SERVICE] [DB|-] [-i SECS]  ECS + RDS health, tasks, events (- for no DB)
 //	rexdash fleet    [-i SECS]                         every ECS service and RDS instance
 //	rexdash billing  [-i SECS]                         AWS spend by month, projection, services
 //	rexdash terraform [BUCKET [KEY]] [-i SECS]         S3 state apply history and lock
@@ -27,7 +27,7 @@ import (
 	"rexdash/internal/ui"
 )
 
-const usage = "usage: rexdash-aws <pipeline NAME|infra CLUSTER [SERVICE] [DB]|fleet|billing|terraform [BUCKET [KEY]]|logs GROUP> [-i SECS] [--stream PREFIX] [--since 15m] [--hide TEXT]"
+const usage = "usage: rexdash-aws <pipeline NAME|infra CLUSTER [SERVICE] [DB|-]|fleet|billing|terraform [BUCKET [KEY]]|logs GROUP> [-i SECS] [--stream PREFIX] [--since 15m] [--hide TEXT]"
 
 func pane(a cli.Args) (ui.Pane, error) {
 	every := func(d time.Duration) time.Duration { return app.Every(a, d) }
@@ -46,7 +46,11 @@ func pane(a cli.Args) (ui.Pane, error) {
 	case "infra":
 		if len(a.Pos) > 0 {
 			service := pos(1, a.Pos[0])
-			return infra.New(a.Pos[0], service, pos(2, service), every(60*time.Second))
+			db := pos(2, service)
+			if db == "-" { // a service without a database
+				db = ""
+			}
+			return infra.New(a.Pos[0], service, db, every(60*time.Second))
 		}
 	case "logs":
 		if len(a.Pos) > 0 {

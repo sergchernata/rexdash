@@ -223,11 +223,15 @@ func (p *Infra) metrics(ctx context.Context) error {
 		Query("mem", "AWS/ECS", "MemoryUtilization", sd, "Average", 60, true),
 		Query("eu", "ECS/ContainerInsights", "EphemeralStorageUtilized", sd, "Average", 60, false),
 		Query("er", "ECS/ContainerInsights", "EphemeralStorageReserved", sd, "Average", 60, false),
-		Query("dbcpu", "AWS/RDS", "CPUUtilization", dd, "Average", 60, true),
-		Query("dbconn", "AWS/RDS", "DatabaseConnections", dd, "Average", 60, true),
-		Query("dbfreemem", "AWS/RDS", "FreeableMemory", dd, "Average", 60, true),
-		Query("dbfree", "AWS/RDS", "FreeStorageSpace", dd, "Average", 300, true),
 		{Id: aws.String("disk"), Expression: aws.String("100*eu/er"), ReturnData: aws.Bool(true)},
+	}
+	if p.db != "" {
+		queries = append(queries[:4:4],
+			Query("dbcpu", "AWS/RDS", "CPUUtilization", dd, "Average", 60, true),
+			Query("dbconn", "AWS/RDS", "DatabaseConnections", dd, "Average", 60, true),
+			Query("dbfreemem", "AWS/RDS", "FreeableMemory", dd, "Average", 60, true),
+			Query("dbfree", "AWS/RDS", "FreeStorageSpace", dd, "Average", 300, true),
+			queries[4])
 	}
 	end := time.Now()
 	r, err := p.cw.GetMetricData(ctx, &cloudwatch.GetMetricDataInput{
@@ -244,6 +248,9 @@ func (p *Infra) metrics(ctx context.Context) error {
 		p.m[aws.ToString(res.Id)] = res.Values
 	}
 
+	if p.db == "" {
+		return nil
+	}
 	// A week of free storage, hourly, for the growth trend.
 	t, err := p.cw.GetMetricData(ctx, &cloudwatch.GetMetricDataInput{
 		MetricDataQueries: []cwtypes.MetricDataQuery{Query("free7d", "AWS/RDS", "FreeStorageSpace", dd, "Average", 3600, true)},
@@ -357,6 +364,9 @@ func (p *Infra) ecsState(ctx context.Context) error {
 }
 
 func (p *Infra) dbState(ctx context.Context) error {
+	if p.db == "" {
+		return nil
+	}
 	r, err := p.rds.DescribeDBInstances(ctx, &rds.DescribeDBInstancesInput{DBInstanceIdentifier: &p.db})
 	if err != nil {
 		return Err(err)
@@ -463,7 +473,11 @@ func (p *Infra) Title() ui.Line {
 }
 
 func (p *Infra) Hints() []ui.Hint {
-	return []ui.Hint{{Key: "↑↓", Desc: "events"}, {Key: "o", Desc: "ECS console"}, {Key: "d", Desc: "RDS console"}}
+	hints := []ui.Hint{{Key: "↑↓", Desc: "events"}, {Key: "o", Desc: "ECS console"}}
+	if p.db != "" {
+		hints = append(hints, ui.Hint{Key: "d", Desc: "RDS console"})
+	}
+	return hints
 }
 
 func (p *Infra) Every() time.Duration { return p.every }
@@ -511,7 +525,7 @@ func (p *Infra) Key(ev *tcell.EventKey) error {
 	switch {
 	case ui.IsRune(ev, 'o'):
 		ui.OpenURL(fmt.Sprintf("https://%s.console.aws.amazon.com/ecs/v2/clusters/%s/services/%s/health?region=%s", r, p.cluster, p.service, r))
-	case ui.IsRune(ev, 'd'):
+	case ui.IsRune(ev, 'd') && p.db != "":
 		ui.OpenURL(fmt.Sprintf("https://%s.console.aws.amazon.com/rds/home?region=%s#database:id=%s;is-cluster=false", r, r, p.db))
 	default:
 		ui.Nav(&p.st.Sel, len(p.events), ev, 10)
@@ -520,7 +534,11 @@ func (p *Infra) Key(ev *tcell.EventKey) error {
 }
 
 func (p *Infra) Draw(b *ui.Buffer, area ui.Rect) {
-	parts := ui.Vertical(area, 0, ui.Len(7), ui.Len(7), ui.Min(4))
+	dbH := 7
+	if p.db == "" { // no database: its room goes to tasks and events
+		dbH = 0
+	}
+	parts := ui.Vertical(area, 0, ui.Len(7), ui.Len(dbH), ui.Min(4))
 	ea, da, la := parts[0], parts[1], parts[2]
 	muted := ui.Fg(ui.Muted())
 
@@ -562,8 +580,16 @@ func (p *Infra) Draw(b *ui.Buffer, area ui.Rect) {
 		Tile(b, cols[2], DISK, "App storage", v, "%", "ephemeral · 3h", p.m["disk"], r)
 	}
 
-	// RDS
-	right = ui.Line{}
+	if p.db != "" {
+		p.drawDB(b, da, pct)
+	}
+
+	// Tasks and events
+	p.drawTasks(b, la)
+}
+
+func (p *Infra) drawDB(b *ui.Buffer, da ui.Rect, pct func(string) (*float64, *float64)) {
+	right := ui.Line{}
 	if d := p.dbi; d != nil {
 		color := ui.Yellow()
 		if d.status == "available" {
@@ -571,8 +597,8 @@ func (p *Infra) Draw(b *ui.Buffer, area ui.Rect) {
 		}
 		right = ui.L(ui.C(" "+d.status+" ", color), ui.C(fmt.Sprintf("· %s · %s ", d.engine, d.class), ui.Muted()))
 	}
-	inner = ui.Panel{Title: ui.LT(fmt.Sprintf(" %s RDS %s ", DB.S(), p.db), ui.Style{}), Right: right}.Draw(b, da)
-	cols = ui.Horizontal(inner, 3, ui.Fill(2), ui.Fill(1), ui.Fill(1), ui.Fill(1))
+	inner := ui.Panel{Title: ui.LT(fmt.Sprintf(" %s RDS %s ", DB.S(), p.db), ui.Style{}), Right: right}.Draw(b, da)
+	cols := ui.Horizontal(inner, 3, ui.Fill(2), ui.Fill(1), ui.Fill(1), ui.Fill(1))
 	spct, used, alloc, ok := p.dbStorage()
 	sub := "7d"
 	if ok {
@@ -593,7 +619,7 @@ func (p *Infra) Draw(b *ui.Buffer, area ui.Rect) {
 		trend[i] = math.Max(u-floor, 0)
 	}
 	Tile(b, cols[0], DISK, "Storage", Opt(spct, ok), "%", sub, trend, Opt(spct/100, ok))
-	v, r = pct("dbcpu")
+	v, r := pct("dbcpu")
 	Tile(b, cols[1], CPU, "CPU", v, "%", "3h", p.m["dbcpu"], r)
 	memp, ok := p.dbMem()
 	var memSeries []float64
@@ -612,7 +638,10 @@ func (p *Infra) Draw(b *ui.Buffer, area ui.Rect) {
 	}
 	Tile(b, cols[3], PLUG, "Conns", Opt(conns, ok), unit, "3h", p.m["dbconn"], ratio)
 
-	// Tasks and events
+}
+
+func (p *Infra) drawTasks(b *ui.Buffer, la ui.Rect) {
+	muted := ui.Fg(ui.Muted())
 	halves := ui.Horizontal(la, 1, ui.Fill(1), ui.Fill(1))
 	ta, va := halves[0], halves[1]
 	block := ui.Panel{Title: ui.LT(fmt.Sprintf(" %s Tasks ", BOX.S()), ui.Style{})}

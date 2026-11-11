@@ -30,7 +30,7 @@ import (
 	"rexdash/internal/ui"
 )
 
-const usage = "usage: rexdash <git|prs|ci|eas|builds|session CMD|pipeline NAME|infra CLUSTER [SERVICE] [DB]|fleet|billing|terraform [BUCKET [KEY]]|logs GROUP> [-i SECS] [-r OWNER/REPO] [--stream PREFIX] [--since 15m] [--hide TEXT]"
+const usage = "usage: rexdash <git|prs|ci|eas|builds|session CMD|pipeline NAME|infra CLUSTER [SERVICE] [DB|-]|fleet|billing|terraform [BUCKET [KEY]]|logs GROUP> [-i SECS] [-r OWNER/REPO] [--stream PREFIX] [--since 15m] [--hide TEXT]"
 
 // awsBinary is rexdash-aws next to this binary, else on PATH.
 func awsBinary() (string, error) {

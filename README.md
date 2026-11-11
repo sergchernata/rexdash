@@ -17,7 +17,7 @@ make test             # unit, shared-case and end-to-end tests
 | `rexdash eas` / `rexdash builds` | Expo release lanes, workflow runs, EAS builds (run in the app dir) |
 | `rexdash pipeline NAME` | CodePipeline stages, runs, actions and build logs |
 | `rexdash logs GROUP [--stream PREFIX] [--since 15m] [--hide TEXT]` | CloudWatch live tail |
-| `rexdash infra CLUSTER [SERVICE] [DB]` | one ECS service and its RDS database |
+| `rexdash infra CLUSTER [SERVICE] [DB\|-]` | one ECS service and its RDS database (`-` for a service without one) |
 | `rexdash fleet` | every ECS service and RDS instance |
 | `rexdash billing` | spend by month, this month's projection, services (Cost Explorer, cached 6h) |
 | `rexdash terraform [BUCKET [KEY]]` | S3 state write history, changes per write, lock |

@@ -6,7 +6,7 @@
 #   top:    Claude (55%) | PRs / Git / Terraform
 #   bottom: Billing | Fleet (45%)
 #
-# usage: rexup [-s SESSION] NAME DIR AWS_PROFILE PIPELINE LOG_GROUP[:STREAM_PREFIX] CLUSTER [SERVICE] [DB]
+# usage: rexup [-s SESSION] NAME DIR AWS_PROFILE PIPELINE LOG_GROUP[:STREAM_PREFIX] CLUSTER [SERVICE] [DB|-]
 #        rexup [-s SESSION] --terraform NAME DIR AWS_PROFILE
 #
 # SESSION is a session label (e.g. one per company); it's created if missing. Without -s the
