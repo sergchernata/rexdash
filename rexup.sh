@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Open a Rex tab with the standard layout:
+# Open a Rex tab with the standard layout, beside a full-height yazi file manager (15%):
 #   top:    Claude (55%) | PRs / Git / Pipeline
 #   bottom: Logs | Infra (45%)
 # or, for an infrastructure (Terraform) repo, with --terraform:
@@ -44,11 +44,11 @@ def split(direction, ratio, before, after):
     return {"split": {"direction": direction, "ratio": ratio, "before": before, "after": after}}
 
 def tab(third, bottom_left, bottom_right):
-    return split("vertical", 0.5,
+    return split("horizontal", 0.15, pane("files", "yazi"), split("vertical", 0.5,
         split("horizontal", 0.55,
             pane("claude", "claude"),
             split("vertical", 1 / 3, dash("PRs", "prs"), split("vertical", 0.5, dash("Git", "git"), third))),
-        split("horizontal", 0.55, bottom_left, bottom_right))
+        split("horizontal", 0.55, bottom_left, bottom_right)))
 
 if kind == "terraform":
     layout = tab(dash("Terraform", "terraform"), dash("Billing", "billing"), dash("Fleet", "fleet"))
