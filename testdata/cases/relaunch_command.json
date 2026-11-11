@@ -72,6 +72,48 @@
   ]
  },
  {
+  "name": "file manager is run",
+  "args": [
+   {
+    "kind": "other",
+    "command": "yazi",
+    "cwd": "/app"
+   }
+  ],
+  "want": [
+   "cd /app && yazi",
+   true
+  ]
+ },
+ {
+  "name": "file manager by path is run",
+  "args": [
+   {
+    "kind": "other",
+    "command": "/opt/homebrew/bin/yazi /app/src",
+    "cwd": "/app"
+   }
+  ],
+  "want": [
+   "cd /app && /opt/homebrew/bin/yazi /app/src",
+   true
+  ]
+ },
+ {
+  "name": "a command named like it is typed",
+  "args": [
+   {
+    "kind": "other",
+    "command": "yazi-dev serve",
+    "cwd": "/app"
+   }
+  ],
+  "want": [
+   "cd /app && yazi-dev serve",
+   false
+  ]
+ },
+ {
   "name": "no cwd",
   "args": [
    {

@@ -187,6 +187,9 @@ func classify(fg int, args, cwd string) map[string]any {
 	return map[string]any{"kind": "other", "command": args, "cwd": cwd}
 }
 
+// safeToRun are programs relaunched with Enter after a restart: browsing, not doing.
+var safeToRun = map[string]bool{"yazi": true}
+
 // relaunchCommand is the shell command that starts a recorded pane again, and whether to press Enter.
 func relaunchCommand(v map[string]any) (string, bool, bool) {
 	cd := ""
@@ -228,11 +231,13 @@ func relaunchCommand(v map[string]any) (string, bool, bool) {
 		return b.String(), true, true
 	case "other":
 		// Typed, not run: the user decides whether to start a dev server or editor again.
+		// Viewers that change nothing just by starting are run.
 		cmd, ok := v["command"].(string)
 		if !ok {
 			return "", false, false
 		}
-		return cd + cmd, false, true
+		prog, _, _ := strings.Cut(cmd, " ")
+		return cd + cmd, safeToRun[filepath.Base(prog)], true
 	}
 	return "", false, false
 }
