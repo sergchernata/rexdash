@@ -154,7 +154,7 @@ func (p *Fleet) issues() []string {
 			out = append(out, fmt.Sprintf("%s %d/%d", s.name, s.running, s.desired))
 		}
 		for _, k := range [][2]string{{"c", "CPU"}, {"m", "MEM"}} {
-			if v, _ := p.last(fmt.Sprintf("s%d%s", i, k[0])); v > 90 {
+			if v, _ := p.last(fmt.Sprintf("s%d%s", i, k[0])); infra.Critical(v) {
 				out = append(out, s.name+" "+k[1])
 			}
 		}
@@ -163,8 +163,17 @@ func (p *Fleet) issues() []string {
 		if d.status != "available" && d.status != "stopped" {
 			out = append(out, d.id+" "+d.status)
 		}
-		if v, _ := p.dbStorage(i); v > 90 {
+		if v, _ := p.dbStorage(i); infra.Critical(v) {
 			out = append(out, d.id+" storage")
+		}
+		if v, _ := p.last(fmt.Sprintf("d%dc", i)); infra.Critical(v) {
+			out = append(out, d.id+" CPU")
+		}
+		if mem := p.dbMem(i); len(mem) > 0 && infra.Critical(mem[len(mem)-1]) {
+			out = append(out, d.id+" MEM")
+		}
+		if v, ok := p.last(fmt.Sprintf("d%dn", i)); ok && d.hasConns && d.conns.N > 0 && infra.Critical(v/d.conns.N*100) {
+			out = append(out, d.id+" conns")
 		}
 	}
 	return out

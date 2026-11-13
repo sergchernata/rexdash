@@ -526,3 +526,28 @@ func TestNarrowPaneKeepsDatabaseNames(t *testing.T) {
 		t.Errorf("count drawn %v", st.Fg)
 	}
 }
+
+// Database CPU, memory and connections at 85% or more are issues, like a full disk.
+func TestHotDatabaseIsAnIssue(t *testing.T) {
+	e, r, c := sample()
+	r.params["pg-db.r6g.large"] = "1" // beta: 1 of 1 connections
+	c.m["d0c"] = []float64{90}        // alpha CPU
+	c.m["d0r"] = []float64{0.5 * gb}  // alpha: 0.5 of 4 GiB free
+	p := newPane(e, r, c)
+	if err := p.Refresh(); err != nil {
+		t.Fatal(err)
+	}
+	if got := strings.Join(p.issues(), ","); got != "worker 1/2,alpha storage,alpha CPU,alpha MEM,beta modifying,beta conns" {
+		t.Errorf("issues %s", got)
+	}
+
+	// 85% is the line: CPU there counts, just below it doesn't.
+	c.m["s0c"] = []float64{85}
+	c.m["s3m"] = []float64{84}
+	if err := p.Refresh(); err != nil {
+		t.Fatal(err)
+	}
+	if got := strings.Join(p.issues(), ","); !strings.HasPrefix(got, "api CPU,worker 1/2,alpha") {
+		t.Errorf("issues %s", got)
+	}
+}

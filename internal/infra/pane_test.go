@@ -159,7 +159,7 @@ func healthy() (*fakeECS, *fakeRDS, *fakeCW) {
 		m: map[string][]float64{
 			"cpu":       {10, 20, 30},
 			"mem":       {40, 50, 60},
-			"dbcpu":     {80, 88},
+			"dbcpu":     {80, 82},
 			"dbconn":    {12, 14},
 			"dbfreemem": {6 * gib, 4 * gib}, // of 16 GiB: 75% used
 			"dbfree":    {26 * gib, 25 * gib},
@@ -253,11 +253,11 @@ func TestRefreshHealthy(t *testing.T) {
 		t.Errorf("app storage tile shown without data:\n%s", text)
 	}
 
-	// Threshold colours: ECS CPU 30% green, RDS memory 75% yellow, RDS CPU 88% red, conns accent.
+	// Threshold colours: ECS CPU 30% green, RDS memory 75% yellow, RDS CPU 82% yellow-orange, conns accent.
 	for _, c := range []struct {
 		val  string
 		want ui.Color
-	}{{"30%", ui.Green()}, {"60%", ui.Heat(60)}, {"75%", ui.Heat(75)}, {"88%", ui.Heat(88)}} {
+	}{{"30%", ui.Green()}, {"60%", ui.Heat(60)}, {"75%", ui.Heat(75)}, {"82%", ui.Heat(82)}} {
 		x, y := find(t, b, c.val)
 		if st := b.StyleAt(x, y); st.Fg != c.want || !st.Bold {
 			t.Errorf("%s: style %+v, want %v", c.val, st, c.want)

@@ -53,6 +53,9 @@ func LoadLevel(pct float64) ui.Tone {
 	return ui.ToneOk
 }
 
+// Critical is when a gauge is full enough to report as a problem: 85%, where its colour turns orange.
+func Critical(pct float64) bool { return LoadLevel(pct) == ui.ToneBad }
+
 // PerDay is the average daily change of an hourly series; needs more than a day of points.
 func PerDay(hourly []float64) (float64, bool) {
 	n := len(hourly)
@@ -488,25 +491,56 @@ func (p *Infra) Status() ui.Status {
 		return ui.Status{State: "working", Msg: "loading"}
 	}
 	msg := fmt.Sprintf("%d/%d tasks", s.running, s.desired)
+	hot := false
 	for _, k := range [][2]string{{"cpu", "CPU"}, {"mem", "MEM"}} {
 		if v, ok := p.last(k[0]); ok {
 			msg += fmt.Sprintf(" · %s %.0f%%", k[1], v)
+			hot = hot || Critical(v)
 		}
 	}
-	pct, _, _, full := p.dbStorage()
-	if full {
+	if pct, _, _, full := p.dbStorage(); full {
 		msg += fmt.Sprintf(" · DB %.0f%% full", pct)
+		hot = hot || Critical(pct)
 	}
-	cpu, _ := p.last("cpu")
-	mem, _ := p.last("mem")
+	// The other gauges are only named once they're critical.
+	for _, g := range p.gauges() {
+		if Critical(g.pct) {
+			msg += " · " + g.text
+			hot = true
+		}
+	}
 	state := "idle"
 	switch {
-	case s.running < s.desired || cpu > 90 || mem > 90 || (full && pct > 90):
+	case s.running < s.desired || hot:
 		state = "error"
 	case s.pending > 0 || s.rollout == "IN_PROGRESS":
 		state = "working"
 	}
 	return ui.Status{State: state, Msg: msg}
+}
+
+type gauge struct {
+	pct  float64
+	text string
+}
+
+// gauges are the readings not already in the status line: app storage and the database's
+// CPU, memory and connections.
+func (p *Infra) gauges() []gauge {
+	var out []gauge
+	if v, ok := p.last("disk"); ok {
+		out = append(out, gauge{v, fmt.Sprintf("storage %.0f%%", v)})
+	}
+	if v, ok := p.last("dbcpu"); ok {
+		out = append(out, gauge{v, fmt.Sprintf("DB CPU %.0f%%", v)})
+	}
+	if v, ok := p.dbMem(); ok {
+		out = append(out, gauge{v, fmt.Sprintf("DB MEM %.0f%%", v)})
+	}
+	if v, ok := p.last("dbconn"); ok && p.dbi != nil && p.dbi.hasConns && p.dbi.conns.N > 0 {
+		out = append(out, gauge{v / p.dbi.conns.N * 100, fmt.Sprintf("DB conns %.0f/%s", v, p.dbi.conns)})
+	}
+	return out
 }
 
 func (p *Infra) Refresh() error {
